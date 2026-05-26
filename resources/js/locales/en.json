@@ -167,5 +167,19 @@
         "confirm_delete": "Are you sure you want to delete this?",
         "no_results": "No results found",
         "loading": "Loading..."
+    },
+    "integrations": {
+        "title": "Integrations",
+        "outlook_desc": "Sync your calendar events with Microsoft Outlook",
+        "teams_desc": "Receive task and reminder notifications in Microsoft Teams",
+        "config_required": "Microsoft app credentials not configured. Add MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET to .env"
+    },
+    "billing": {
+        "title": "Billing & Plans"
+    },
+    "search": {
+        "title": "Search",
+        "placeholder": "Search projects, tasks, notes, contacts...",
+        "start": "Type at least 2 characters to search across all your data"
     }
 }

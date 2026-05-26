@@ -32,6 +32,16 @@ class ContactController extends Controller
         ]);
     }
 
+    public function create(): Response
+    {
+        return Inertia::render('Contacts/Create');
+    }
+
+    public function scan(): Response
+    {
+        return Inertia::render('Contacts/Scan');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
