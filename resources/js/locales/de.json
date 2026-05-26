@@ -181,5 +181,29 @@
         "title": "Suche",
         "placeholder": "Projekte, Aufgaben, Notizen, Kontakte suchen...",
         "start": "Geben Sie mindestens 2 Zeichen ein, um alle Ihre Daten zu durchsuchen"
+    },
+    "nav": {
+        "dashboard": "Übersicht",
+        "projects": "Projekte",
+        "tasks": "Aufgaben",
+        "goals": "Ziele",
+        "notes": "Notizen",
+        "documents": "Dokumente",
+        "contacts": "Kontakte",
+        "integrations": "Integrationen",
+        "billing": "Abrechnung",
+        "reports": "Berichte",
+        "api": "API & Tokens"
+    },
+    "reports": {
+        "title": "Berichte & Analysen"
+    },
+    "api": {
+        "title": "API & Tokens"
+    },
+    "admin": {
+        "title": "Admin-Dashboard",
+        "users": "Benutzerverwaltung",
+        "audit_logs": "Prüfprotokolle"
     }
 }

@@ -22,6 +22,7 @@ class User extends Authenticatable
         'avatar',
         'locale',
         'timezone',
+        'is_admin',
     ];
 
     protected $hidden = [
@@ -32,6 +33,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_admin' => 'boolean',
     ];
 
     public function ownedProjects(): HasMany
