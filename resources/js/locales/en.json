@@ -181,5 +181,29 @@
         "title": "Search",
         "placeholder": "Search projects, tasks, notes, contacts...",
         "start": "Type at least 2 characters to search across all your data"
+    },
+    "nav": {
+        "dashboard": "Dashboard",
+        "projects": "Projects",
+        "tasks": "Tasks",
+        "goals": "Goals",
+        "notes": "Notes",
+        "documents": "Documents",
+        "contacts": "Contacts",
+        "integrations": "Integrations",
+        "billing": "Billing",
+        "reports": "Reports",
+        "api": "API & Tokens"
+    },
+    "reports": {
+        "title": "Reports & Analytics"
+    },
+    "api": {
+        "title": "API & Tokens"
+    },
+    "admin": {
+        "title": "Admin Dashboard",
+        "users": "User Management",
+        "audit_logs": "Audit Logs"
     }
 }

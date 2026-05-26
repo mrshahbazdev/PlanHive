@@ -25,6 +25,7 @@ class HandleInertiaRequests extends Middleware
                     'avatar' => $request->user()->avatar,
                     'locale' => $request->user()->locale,
                     'timezone' => $request->user()->timezone,
+                    'is_admin' => $request->user()->is_admin,
                 ] : null,
             ],
             'flash' => [
