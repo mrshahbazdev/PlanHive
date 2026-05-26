@@ -13,6 +13,7 @@ class Reminder extends Model
 
     protected $fillable = [
         'user_id',
+        'title',
         'remindable_type',
         'remindable_id',
         'remind_at',

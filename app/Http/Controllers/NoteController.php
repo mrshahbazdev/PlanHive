@@ -23,9 +23,13 @@ class NoteController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('Notes/Create');
+        $projects = $request->user()->ownedProjects()->select('id', 'name', 'color')->get();
+
+        return Inertia::render('Notes/Create', [
+            'projects' => $projects,
+        ]);
     }
 
     public function store(Request $request)
@@ -41,13 +45,23 @@ class NoteController extends Controller
         Note::create($validated);
 
         return redirect()->route('notes.index')
-            ->with('success', __('notes.created'));
+            ->with('success', 'Note created successfully');
     }
 
     public function show(Note $note): Response
     {
         return Inertia::render('Notes/Show', [
             'note' => $note->load('project:id,name,color', 'documents'),
+        ]);
+    }
+
+    public function edit(Request $request, Note $note): Response
+    {
+        $projects = $request->user()->ownedProjects()->select('id', 'name', 'color')->get();
+
+        return Inertia::render('Notes/Edit', [
+            'note' => $note,
+            'projects' => $projects,
         ]);
     }
 
@@ -62,13 +76,14 @@ class NoteController extends Controller
 
         $note->update($validated);
 
-        return back()->with('success', __('notes.updated'));
+        return redirect()->route('notes.show', $note)
+            ->with('success', 'Note updated successfully');
     }
 
     public function destroy(Note $note)
     {
         $note->delete();
         return redirect()->route('notes.index')
-            ->with('success', __('notes.deleted'));
+            ->with('success', 'Note deleted successfully');
     }
 }

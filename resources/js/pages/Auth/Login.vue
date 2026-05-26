@@ -63,6 +63,7 @@ const submit = () => {
                             <input v-model="form.remember" type="checkbox" class="rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
                             <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('auth.remember_me') }}</span>
                         </label>
+                        <Link href="/forgot-password" class="text-sm text-primary-600 hover:text-primary-700">{{ t('auth.forgot_password') }}</Link>
                     </div>
 
                     <button type="submit" :disabled="form.processing" class="btn-primary w-full py-3">

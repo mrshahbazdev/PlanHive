@@ -12,6 +12,9 @@
         "notes": "Notes",
         "documents": "Documents",
         "contacts": "Contacts",
+        "members": "Members",
+        "reminders": "Reminders",
+        "notifications": "Notifications",
         "settings": "Settings",
         "logout": "Logout"
     },
@@ -28,7 +31,8 @@
         "has_account": "Already have an account?",
         "sign_up": "Sign up",
         "sign_in": "Sign in",
-        "language": "Language"
+        "language": "Language",
+        "logout": "Log Out"
     },
     "dashboard": {
         "welcome": "Welcome back",

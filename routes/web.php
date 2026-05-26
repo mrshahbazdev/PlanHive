@@ -1,14 +1,20 @@
 <?php
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectMemberController;
+use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,6 +26,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'store']);
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store']);
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
 });
 
 // Authenticated routes
@@ -29,8 +39,19 @@ Route::middleware('auth')->group(function () {
     // Dashboard (Calendar Homepage)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Profile & Settings
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
+
     // Projects
     Route::resource('projects', ProjectController::class);
+
+    // Project Members
+    Route::post('/projects/{project}/members', [ProjectMemberController::class, 'store'])->name('projects.members.store');
+    Route::put('/projects/{project}/members/{user}', [ProjectMemberController::class, 'update'])->name('projects.members.update');
+    Route::delete('/projects/{project}/members/{user}', [ProjectMemberController::class, 'destroy'])->name('projects.members.destroy');
 
     // Tasks
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
@@ -58,8 +79,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
     Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+    Route::get('/documents/{document}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 
     // Contacts
     Route::resource('contacts', ContactController::class);
+
+    // Reminders
+    Route::get('/reminders', [ReminderController::class, 'index'])->name('reminders.index');
+    Route::post('/reminders', [ReminderController::class, 'store'])->name('reminders.store');
+    Route::delete('/reminders/{reminder}', [ReminderController::class, 'destroy'])->name('reminders.destroy');
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 });

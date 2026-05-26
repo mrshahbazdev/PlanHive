@@ -8,6 +8,7 @@ const props = defineProps({ project: Object });
 
 const showTaskModal = ref(false);
 const showGoalModal = ref(false);
+const showMemberModal = ref(false);
 const activeTab = ref('tasks');
 
 const taskForm = useForm({
@@ -45,6 +46,22 @@ const priorityColors = {
     medium: 'bg-blue-100 text-blue-700', low: 'bg-gray-100 text-gray-700',
 };
 
+const memberForm = useForm({
+    email: '', role: 'member',
+});
+
+const addMember = () => {
+    memberForm.post(`/projects/${props.project.id}/members`, {
+        onSuccess: () => { showMemberModal.value = false; memberForm.reset(); },
+    });
+};
+
+const removeMember = (userId) => {
+    if (confirm('Remove this member?')) {
+        router.delete(`/projects/${props.project.id}/members/${userId}`);
+    }
+};
+
 const statusColumns = ['todo', 'in_progress', 'review', 'done'];
 </script>
 
@@ -69,7 +86,7 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
 
         <!-- Tabs -->
         <div class="flex gap-1 mb-6 border-b border-gray-200 dark:border-gray-700">
-            <button v-for="tab in ['tasks', 'goals', 'notes']" :key="tab"
+            <button v-for="tab in ['tasks', 'goals', 'notes', 'members']" :key="tab"
                     @click="activeTab = tab"
                     :class="['px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors',
                              activeTab === tab ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700']">
@@ -145,6 +162,63 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
                     </div>
                     <div v-if="note.body" class="text-sm text-gray-500 dark:text-gray-400 line-clamp-3 prose prose-sm" v-html="note.body"></div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Members Tab -->
+        <div v-if="activeTab === 'members'">
+            <div class="flex justify-end mb-4">
+                <button @click="showMemberModal = true" class="btn-primary text-sm">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Add Member
+                </button>
+            </div>
+            <div v-if="!(project.members || []).length" class="card p-8 text-center">
+                <p class="text-gray-500">No members yet. Invite someone to collaborate!</p>
+            </div>
+            <div v-else class="space-y-2">
+                <div v-for="member in project.members" :key="member.id" class="card p-4 flex items-center gap-4">
+                    <div class="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold">
+                        {{ member.name?.charAt(0)?.toUpperCase() }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ member.name }}</p>
+                        <p class="text-xs text-gray-500">{{ member.email }}</p>
+                    </div>
+                    <span class="text-xs px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium">
+                        {{ member.pivot?.role || 'member' }}
+                    </span>
+                    <button @click="removeMember(member.id)" class="text-gray-400 hover:text-red-500 p-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Member Modal -->
+        <div v-if="showMemberModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="showMemberModal = false">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add Member</h3>
+                <form @submit.prevent="addMember" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                        <input v-model="memberForm.email" type="email" required class="input-field" placeholder="member@example.com" />
+                        <p v-if="memberForm.errors.email" class="mt-1 text-sm text-red-500">{{ memberForm.errors.email }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
+                        <select v-model="memberForm.role" class="input-field">
+                            <option value="boss">Boss</option>
+                            <option value="manager">Manager</option>
+                            <option value="member">Member</option>
+                            <option value="viewer">Viewer</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" @click="showMemberModal = false" class="btn-secondary">{{ t('common.cancel') }}</button>
+                        <button type="submit" :disabled="memberForm.processing" class="btn-primary">Add Member</button>
+                    </div>
+                </form>
             </div>
         </div>
 

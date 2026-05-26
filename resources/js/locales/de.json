@@ -12,6 +12,9 @@
         "notes": "Notizen",
         "documents": "Dokumente",
         "contacts": "Kontakte",
+        "members": "Mitglieder",
+        "reminders": "Erinnerungen",
+        "notifications": "Benachrichtigungen",
         "settings": "Einstellungen",
         "logout": "Abmelden"
     },
@@ -28,7 +31,8 @@
         "has_account": "Bereits ein Konto?",
         "sign_up": "Registrieren",
         "sign_in": "Anmelden",
-        "language": "Sprache"
+        "language": "Sprache",
+        "logout": "Abmelden"
     },
     "dashboard": {
         "welcome": "Willkommen zurück",
