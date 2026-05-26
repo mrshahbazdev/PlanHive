@@ -57,6 +57,21 @@ class DocumentController extends Controller
         );
     }
 
+    public function preview(Document $document)
+    {
+        $previewable = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'application/pdf'];
+
+        if (!in_array($document->mime_type, $previewable)) {
+            return $this->download($document);
+        }
+
+        return Storage::disk('local')->response(
+            $document->storage_path,
+            $document->original_name,
+            ['Content-Type' => $document->mime_type]
+        );
+    }
+
     public function destroy(Document $document)
     {
         Storage::disk('local')->delete($document->storage_path);
