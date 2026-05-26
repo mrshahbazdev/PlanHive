@@ -4,6 +4,7 @@ import { Link, usePage, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import { useThemeStore } from '../stores/theme.js';
 import { useSidebarStore } from '../stores/sidebar.js';
+import ToastNotifications from '../components/ToastNotifications.vue';
 
 const { t, locale } = useI18n();
 const page = usePage();
@@ -23,6 +24,8 @@ const navigation = [
     { name: 'nav.documents', href: '/documents', icon: 'paperclip' },
     { name: 'nav.contacts', href: '/contacts', icon: 'users' },
     { name: 'Reminders', href: '/reminders', icon: 'bell' },
+    { name: 'nav.integrations', href: '/integrations', icon: 'plug' },
+    { name: 'nav.billing', href: '/billing', icon: 'credit-card' },
 ];
 
 const isActive = (href) => {
@@ -80,6 +83,8 @@ const logout = () => {
                     <svg v-if="item.icon === 'paperclip'" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                     <svg v-if="item.icon === 'users'" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     <svg v-if="item.icon === 'bell'" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <svg v-if="item.icon === 'plug'" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                    <svg v-if="item.icon === 'credit-card'" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                     <span v-if="!sidebarStore.collapsed">{{ item.name.startsWith('nav.') ? t(item.name) : item.name }}</span>
                 </Link>
             </nav>
@@ -109,6 +114,7 @@ const logout = () => {
                                 type="text"
                                 :placeholder="t('common.search')"
                                 class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                @focus="router.get('/search')"
                             />
                         </div>
                     </div>
@@ -180,5 +186,8 @@ const logout = () => {
                 <slot />
             </main>
         </div>
+
+        <!-- Toast Notifications -->
+        <ToastNotifications />
     </div>
 </template>

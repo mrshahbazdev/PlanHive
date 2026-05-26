@@ -1,13 +1,24 @@
 {
+  "_index-C0q5K_Wr.js": {
+    "file": "assets/index-C0q5K_Wr.js",
+    "name": "index",
+    "isDynamicEntry": true
+  },
   "resources/css/app.css": {
-    "file": "assets/app-DVn3Byce.css",
+    "file": "assets/app-DnwmjaV3.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-Cxj-jB8W.js",
+    "file": "assets/app-BQwSUtyt.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "dynamicImports": [
+      "_index-C0q5K_Wr.js"
+    ],
+    "css": [
+      "assets/app-BH94FuXm.css"
+    ]
   }
 }

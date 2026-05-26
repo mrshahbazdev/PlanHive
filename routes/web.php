@@ -4,17 +4,20 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectMemberController;
 use App\Http\Controllers\ReminderController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,6 +41,9 @@ Route::middleware('auth')->group(function () {
 
     // Dashboard (Calendar Homepage)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Global Search
+    Route::get('/search', [SearchController::class, 'index'])->name('search');
 
     // Profile & Settings
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -83,6 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 
     // Contacts
+    Route::get('/contacts/scan', [ContactController::class, 'scan'])->name('contacts.scan');
     Route::resource('contacts', ContactController::class);
 
     // Reminders
@@ -94,4 +101,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+
+    // Notification API (for real-time unread count)
+    Route::get('/api/notifications/unread-count', function (\Illuminate\Http\Request $request) {
+        return response()->json(['count' => $request->user()->unreadNotifications()->count()]);
+    })->name('notifications.unreadCount');
+
+    // Integrations (Outlook / Teams)
+    Route::get('/integrations', [IntegrationController::class, 'index'])->name('integrations.index');
+    Route::get('/integrations/outlook/connect', [IntegrationController::class, 'connectOutlook'])->name('integrations.outlook.connect');
+    Route::get('/integrations/outlook/callback', [IntegrationController::class, 'outlookCallback'])->name('integrations.outlook.callback');
+    Route::post('/integrations/outlook/sync', [IntegrationController::class, 'syncCalendar'])->name('integrations.outlook.sync');
+    Route::post('/integrations/teams', [IntegrationController::class, 'connectTeams'])->name('integrations.teams.connect');
+    Route::post('/integrations/teams/test', [IntegrationController::class, 'testTeamsWebhook'])->name('integrations.teams.test');
+    Route::delete('/integrations/{provider}', [IntegrationController::class, 'disconnect'])->name('integrations.disconnect');
+
+    // Billing
+    Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
+    Route::post('/billing/subscribe', [BillingController::class, 'subscribe'])->name('billing.subscribe');
+    Route::get('/billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
+    Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
+    Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
 });

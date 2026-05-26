@@ -167,5 +167,19 @@
         "confirm_delete": "Sind Sie sicher, dass Sie dies löschen möchten?",
         "no_results": "Keine Ergebnisse gefunden",
         "loading": "Laden..."
+    },
+    "integrations": {
+        "title": "Integrationen",
+        "outlook_desc": "Synchronisieren Sie Ihre Kalendertermine mit Microsoft Outlook",
+        "teams_desc": "Erhalten Sie Aufgaben- und Erinnerungsbenachrichtigungen in Microsoft Teams",
+        "config_required": "Microsoft-Anmeldedaten nicht konfiguriert. Fügen Sie MICROSOFT_CLIENT_ID und MICROSOFT_CLIENT_SECRET zur .env hinzu"
+    },
+    "billing": {
+        "title": "Abrechnung & Pläne"
+    },
+    "search": {
+        "title": "Suche",
+        "placeholder": "Projekte, Aufgaben, Notizen, Kontakte suchen...",
+        "start": "Geben Sie mindestens 2 Zeichen ein, um alle Ihre Daten zu durchsuchen"
     }
 }
