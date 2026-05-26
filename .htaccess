@@ -1,0 +1,11 @@
+# Root .htaccess for Shared Hosting Deployment
+# This file redirects all requests to the /public directory
+# Upload the entire Laravel project to your hosting root (e.g., /home/username/)
+# and point your domain to the public/ folder, OR use this .htaccess
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirect all requests to public/ folder
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
