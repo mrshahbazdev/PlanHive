@@ -29,10 +29,13 @@ class ReportController extends Controller
             'goals as completed_goals_count' => fn ($q) => $q->where('status', 'completed'),
         ])->get();
 
+        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+        $dateFormatter = $driver === 'sqlite' ? 'strftime("%Y-%m", updated_at)' : 'DATE_FORMAT(updated_at, "%Y-%m")';
+
         $tasksByMonth = Task::whereIn('project_id', $projectIds)
             ->where('status', 'done')
             ->where('updated_at', '>=', Carbon::now()->subMonths(6))
-            ->selectRaw('DATE_FORMAT(updated_at, "%Y-%m") as month, COUNT(*) as count')
+            ->selectRaw($dateFormatter . ' as month, COUNT(*) as count')
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('count', 'month')
