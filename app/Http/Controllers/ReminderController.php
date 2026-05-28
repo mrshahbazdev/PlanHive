@@ -25,7 +25,7 @@ class ReminderController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'remind_at' => ['required', 'date', 'after:now'],
-            'channel' => ['required', 'in:app,email,push'],
+            'channel' => ['required', 'in:in_app,email,push,teams'],
             'remindable_type' => ['nullable', 'string'],
             'remindable_id' => ['nullable', 'integer'],
         ]);

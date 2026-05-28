@@ -11,7 +11,7 @@ const showModal = ref(false);
 const form = useForm({
     title: '',
     remind_at: '',
-    channel: 'app',
+    channel: 'in_app',
 });
 
 const createReminder = () => {
@@ -84,7 +84,7 @@ const formatDate = (date) => {
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Channel</label>
                         <select v-model="form.channel" class="input-field">
-                            <option value="app">In-App</option>
+                            <option value="in_app">In-App</option>
                             <option value="email">Email</option>
                             <option value="push">Push</option>
                         </select>
