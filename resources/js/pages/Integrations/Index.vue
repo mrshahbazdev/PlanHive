@@ -12,6 +12,15 @@ const props = defineProps({
 const teamsForm = useForm({ webhook_url: '' });
 const showTeamsModal = ref(false);
 
+const microsoftAppForm = useForm({ client_id: '', client_secret: '' });
+const showMicrosoftAppModal = ref(false);
+
+const saveMicrosoftAppCredentials = () => {
+    microsoftAppForm.post('/integrations/microsoft-app', {
+        onSuccess: () => { showMicrosoftAppModal.value = false; microsoftAppForm.reset(); },
+    });
+};
+
 const connectTeams = () => {
     teamsForm.post('/integrations/teams', {
         onSuccess: () => { showTeamsModal.value = false; teamsForm.reset(); },
@@ -68,7 +77,10 @@ const testTeams = () => {
                     <a v-if="microsoftConfigured" href="/integrations/outlook/connect" class="btn-primary text-sm">
                         Connect Outlook
                     </a>
-                    <p v-else class="text-sm text-amber-600 dark:text-amber-400">
+                    <button v-else @click="showMicrosoftAppModal = true" class="btn-primary text-sm">
+                        Configure Microsoft App
+                    </button>
+                    <p v-if="!microsoftConfigured" class="mt-3 text-sm text-amber-600 dark:text-amber-400">
                         {{ t('integrations.config_required') }}
                     </p>
                 </div>
@@ -122,6 +134,32 @@ const testTeams = () => {
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" @click="showTeamsModal = false" class="btn-secondary">Cancel</button>
                         <button type="submit" :disabled="teamsForm.processing" class="btn-primary">Connect</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Microsoft App Credentials Modal -->
+        <div v-if="showMicrosoftAppModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="showMicrosoftAppModal = false">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Microsoft App Credentials</h3>
+                <p class="text-sm text-gray-500 mb-4">
+                    Enter your Microsoft Entra ID (Azure AD) application credentials to enable Outlook integration.
+                </p>
+                <form @submit.prevent="saveMicrosoftAppCredentials" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client ID</label>
+                        <input v-model="microsoftAppForm.client_id" type="text" required class="input-field" placeholder="e.g. 12345678-abcd-1234..." />
+                        <p v-if="microsoftAppForm.errors.client_id" class="mt-1 text-sm text-red-500">{{ microsoftAppForm.errors.client_id }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client Secret</label>
+                        <input v-model="microsoftAppForm.client_secret" type="password" required class="input-field" placeholder="Client secret value" />
+                        <p v-if="microsoftAppForm.errors.client_secret" class="mt-1 text-sm text-red-500">{{ microsoftAppForm.errors.client_secret }}</p>
+                    </div>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" @click="showMicrosoftAppModal = false" class="btn-secondary">Cancel</button>
+                        <button type="submit" :disabled="microsoftAppForm.processing" class="btn-primary">Save</button>
                     </div>
                 </form>
             </div>

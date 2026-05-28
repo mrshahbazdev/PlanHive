@@ -1,4 +1,5 @@
 import { createApp, h } from 'vue';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { createI18n } from 'vue-i18n';
 import { createPinia } from 'pinia';
@@ -19,14 +20,11 @@ const pinia = createPinia();
 
 createInertiaApp({
     title: (title) => title ? `${title} - PlanHive` : 'PlanHive',
-    resolve: (name) => {
-        const pages = import.meta.glob('./pages/**/*.vue', { eager: true });
-        const page = pages[`./pages/${name}.vue`];
-        if (page.default.layout === undefined) {
-            const authPages = ['Auth/Login', 'Auth/Register', 'Auth/ForgotPassword', 'Auth/ResetPassword', 'Welcome'];
-            if (!authPages.includes(name)) {
-                page.default.layout = AppLayout;
-            }
+    resolve: async (name) => {
+        const page = await resolvePageComponent(`./pages/${name}.vue`, import.meta.glob('./pages/**/*.vue'));
+        const authPages = ['Auth/Login', 'Auth/Register', 'Auth/ForgotPassword', 'Auth/ResetPassword', 'Welcome'];
+        if (page.default.layout === undefined && !authPages.includes(name)) {
+            page.default.layout = AppLayout;
         }
         return page;
     },

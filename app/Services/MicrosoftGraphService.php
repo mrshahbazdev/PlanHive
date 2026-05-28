@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\CalendarEvent;
 use App\Models\UserIntegration;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -13,11 +14,29 @@ class MicrosoftGraphService
     private const GRAPH_URL = 'https://graph.microsoft.com/v1.0';
     private const SCOPES = 'openid profile email offline_access Calendars.ReadWrite User.Read';
 
-    public function getAuthUrl(): string
+    public function getAppCredentials(User $user): ?array
     {
+        $integration = $user->integrations()->where('provider', 'microsoft_app')->first();
+        
+        if (!$integration || empty($integration->settings['client_id']) || empty($integration->settings['client_secret'])) {
+            return null;
+        }
+
+        return [
+            'client_id' => $integration->settings['client_id'],
+            'client_secret' => $integration->settings['client_secret'],
+            'redirect_uri' => url(config('services.microsoft.redirect_uri')),
+        ];
+    }
+
+    public function getAuthUrl(User $user): ?string
+    {
+        $creds = $this->getAppCredentials($user);
+        if (!$creds) return null;
+
         $params = http_build_query([
-            'client_id' => config('services.microsoft.client_id'),
-            'redirect_uri' => config('services.microsoft.redirect_uri'),
+            'client_id' => $creds['client_id'],
+            'redirect_uri' => $creds['redirect_uri'],
             'response_type' => 'code',
             'scope' => self::SCOPES,
             'response_mode' => 'query',
@@ -26,13 +45,16 @@ class MicrosoftGraphService
         return self::AUTH_URL . '/authorize?' . $params;
     }
 
-    public function exchangeCode(string $code): array
+    public function exchangeCode(User $user, string $code): array
     {
+        $creds = $this->getAppCredentials($user);
+        if (!$creds) return [];
+
         $response = Http::asForm()->post(self::AUTH_URL . '/token', [
-            'client_id' => config('services.microsoft.client_id'),
-            'client_secret' => config('services.microsoft.client_secret'),
+            'client_id' => $creds['client_id'],
+            'client_secret' => $creds['client_secret'],
             'code' => $code,
-            'redirect_uri' => config('services.microsoft.redirect_uri'),
+            'redirect_uri' => $creds['redirect_uri'],
             'grant_type' => 'authorization_code',
             'scope' => self::SCOPES,
         ]);
@@ -42,9 +64,12 @@ class MicrosoftGraphService
 
     public function refreshToken(UserIntegration $integration): bool
     {
+        $creds = $this->getAppCredentials($integration->user);
+        if (!$creds) return false;
+
         $response = Http::asForm()->post(self::AUTH_URL . '/token', [
-            'client_id' => config('services.microsoft.client_id'),
-            'client_secret' => config('services.microsoft.client_secret'),
+            'client_id' => $creds['client_id'],
+            'client_secret' => $creds['client_secret'],
             'refresh_token' => $integration->refresh_token,
             'grant_type' => 'refresh_token',
             'scope' => self::SCOPES,

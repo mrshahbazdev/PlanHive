@@ -18,7 +18,10 @@
         @inertiaHead
     </head>
     <body class="h-full font-sans antialiased">
-        @inertia
+        <script data-page="app" type="application/json">
+            {!! json_encode($page) !!}
+        </script>
+        <div id="app"></div>
         <script>
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/sw.js').catch(() => {});

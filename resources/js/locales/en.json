@@ -16,7 +16,11 @@
         "reminders": "Reminders",
         "notifications": "Notifications",
         "settings": "Settings",
-        "logout": "Logout"
+        "logout": "Logout",
+        "integrations": "Integrations",
+        "billing": "Billing",
+        "reports": "Reports",
+        "api": "API & Tokens"
     },
     "auth": {
         "login": "Log In",
@@ -166,13 +170,14 @@
         "actions": "Actions",
         "confirm_delete": "Are you sure you want to delete this?",
         "no_results": "No results found",
-        "loading": "Loading..."
+        "loading": "Loading...",
+        "free": "Free"
     },
     "integrations": {
         "title": "Integrations",
         "outlook_desc": "Sync your calendar events with Microsoft Outlook",
         "teams_desc": "Receive task and reminder notifications in Microsoft Teams",
-        "config_required": "Microsoft app credentials not configured. Add MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET to .env"
+        "config_required": "Microsoft app credentials not configured. Please configure your Client ID and Secret to connect Outlook."
     },
     "billing": {
         "title": "Billing & Plans"
@@ -182,19 +187,7 @@
         "placeholder": "Search projects, tasks, notes, contacts...",
         "start": "Type at least 2 characters to search across all your data"
     },
-    "nav": {
-        "dashboard": "Dashboard",
-        "projects": "Projects",
-        "tasks": "Tasks",
-        "goals": "Goals",
-        "notes": "Notes",
-        "documents": "Documents",
-        "contacts": "Contacts",
-        "integrations": "Integrations",
-        "billing": "Billing",
-        "reports": "Reports",
-        "api": "API & Tokens"
-    },
+
     "reports": {
         "title": "Reports & Analytics"
     },

@@ -28,13 +28,37 @@ class IntegrationController extends Controller
 
         return Inertia::render('Integrations/Index', [
             'integrations' => $integrations,
-            'microsoftConfigured' => !empty(config('services.microsoft.client_id')),
+            'microsoftConfigured' => $request->user()->integrations()->where('provider', 'microsoft_app')->exists(),
         ]);
     }
 
-    public function connectOutlook(): \Illuminate\Http\RedirectResponse
+    public function saveMicrosoftAppCredentials(Request $request)
     {
-        $url = $this->graph->getAuthUrl();
+        $request->validate([
+            'client_id' => ['required', 'string'],
+            'client_secret' => ['required', 'string'],
+        ]);
+
+        $request->user()->integrations()->updateOrCreate(
+            ['provider' => 'microsoft_app'],
+            [
+                'access_token' => 'credentials',
+                'settings' => [
+                    'client_id' => $request->client_id,
+                    'client_secret' => $request->client_secret,
+                ],
+            ]
+        );
+
+        return back()->with('success', 'Microsoft App credentials saved successfully.');
+    }
+
+    public function connectOutlook(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $url = $this->graph->getAuthUrl($request->user());
+        if (!$url) {
+            return back()->with('error', 'Microsoft App credentials not configured.');
+        }
         return redirect()->away($url);
     }
 
@@ -45,7 +69,7 @@ class IntegrationController extends Controller
                 ->with('error', 'Microsoft authorization was denied.');
         }
 
-        $tokenData = $this->graph->exchangeCode($request->code);
+        $tokenData = $this->graph->exchangeCode($request->user(), $request->code);
 
         if (!isset($tokenData['access_token'])) {
             return redirect()->route('integrations.index')

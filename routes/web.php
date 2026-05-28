@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
 
     // Integrations (Outlook / Teams)
     Route::get('/integrations', [IntegrationController::class, 'index'])->name('integrations.index');
+    Route::post('/integrations/microsoft-app', [IntegrationController::class, 'saveMicrosoftAppCredentials'])->name('integrations.microsoft.save');
     Route::get('/integrations/outlook/connect', [IntegrationController::class, 'connectOutlook'])->name('integrations.outlook.connect');
     Route::get('/integrations/outlook/callback', [IntegrationController::class, 'outlookCallback'])->name('integrations.outlook.callback');
     Route::post('/integrations/outlook/sync', [IntegrationController::class, 'syncCalendar'])->name('integrations.outlook.sync');
