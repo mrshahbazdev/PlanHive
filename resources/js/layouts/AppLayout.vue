@@ -27,7 +27,6 @@ const navigation = [
     { name: 'nav.integrations', href: '/integrations', icon: 'plug' },
     { name: 'nav.reports', href: '/reports', icon: 'chart' },
     { name: 'nav.api', href: '/api-tokens', icon: 'key' },
-    { name: 'nav.billing', href: '/billing', icon: 'credit-card' },
 ];
 
 const adminNav = [
