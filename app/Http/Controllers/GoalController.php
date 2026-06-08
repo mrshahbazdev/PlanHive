@@ -21,8 +21,13 @@ class GoalController extends Controller
             ->latest()
             ->paginate(20);
 
+        $projects = $user->projects()->get(['projects.id', 'projects.name', 'projects.color'])
+            ->merge($user->ownedProjects()->get(['id', 'name', 'color']))
+            ->unique('id');
+
         return Inertia::render('Goals/Index', [
             'goals' => $goals,
+            'projects' => $projects,
         ]);
     }
 

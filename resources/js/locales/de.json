@@ -101,7 +101,8 @@
         "missed": "Verfehlt",
         "created": "Ziel erfolgreich erstellt",
         "updated": "Ziel erfolgreich aktualisiert",
-        "deleted": "Ziel erfolgreich gelöscht"
+        "deleted": "Ziel erfolgreich gelöscht",
+        "no_goals": "Noch keine Ziele. Erstellen Sie Ihr erstes Ziel!"
     },
     "notes": {
         "title": "Notizen",
