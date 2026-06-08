@@ -15,11 +15,22 @@ class DocumentController extends Controller
         $documents = Document::where('uploaded_by', $request->user()->id)
             ->with('project:id,name,color')
             ->when($request->project_id, fn ($q) => $q->where('project_id', $request->project_id))
+            ->when($request->folder, fn ($q) => $q->where('folder', $request->folder))
+            ->when($request->search, fn ($q, $search) =>
+                $q->where('original_name', 'like', "%{$search}%")
+            )
             ->latest()
             ->paginate(20);
 
+        $folders = Document::where('uploaded_by', $request->user()->id)
+            ->whereNotNull('folder')
+            ->distinct()
+            ->pluck('folder');
+
         return Inertia::render('Documents/Index', [
             'documents' => $documents,
+            'folders' => $folders,
+            'filters' => $request->only(['search', 'folder', 'project_id']),
         ]);
     }
 
@@ -28,6 +39,7 @@ class DocumentController extends Controller
         $request->validate([
             'file' => ['required', 'file', 'max:51200'],
             'project_id' => ['nullable', 'exists:projects,id'],
+            'folder' => ['nullable', 'string', 'max:255'],
             'documentable_type' => ['nullable', 'string'],
             'documentable_id' => ['nullable', 'integer'],
         ]);
@@ -38,6 +50,7 @@ class DocumentController extends Controller
         Document::create([
             'project_id' => $request->project_id,
             'uploaded_by' => $request->user()->id,
+            'folder' => $request->folder,
             'documentable_type' => $request->documentable_type,
             'documentable_id' => $request->documentable_id,
             'original_name' => $file->getClientOriginalName(),

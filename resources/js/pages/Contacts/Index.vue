@@ -7,6 +7,7 @@ const { t } = useI18n();
 const props = defineProps({ contacts: Object, filters: Object });
 
 const showModal = ref(false);
+const editingContact = ref(null);
 const search = ref(props.filters?.search || '');
 
 const form = useForm({
@@ -24,10 +25,38 @@ const addTag = () => {
 };
 const removeTag = (idx) => form.tags.splice(idx, 1);
 
-const createContact = () => {
-    form.post('/contacts', {
-        onSuccess: () => { showModal.value = false; form.reset(); },
-    });
+const openCreate = () => {
+    editingContact.value = null;
+    form.reset();
+    showModal.value = true;
+};
+
+const openEdit = (contact) => {
+    editingContact.value = contact;
+    form.first_name = contact.first_name;
+    form.last_name = contact.last_name || '';
+    form.email = contact.email || '';
+    form.phone = contact.phone || '';
+    form.company = contact.company || '';
+    form.job_title = contact.job_title || '';
+    form.address = contact.address || '';
+    form.website = contact.website || '';
+    form.notes = contact.notes || '';
+    form.project_id = contact.project_id;
+    form.tags = contact.tags?.map(t => t.tag) || [];
+    showModal.value = true;
+};
+
+const submitForm = () => {
+    if (editingContact.value) {
+        form.put(`/contacts/${editingContact.value.id}`, {
+            onSuccess: () => { showModal.value = false; editingContact.value = null; form.reset(); },
+        });
+    } else {
+        form.post('/contacts', {
+            onSuccess: () => { showModal.value = false; form.reset(); },
+        });
+    }
 };
 
 const doSearch = () => {
@@ -39,16 +68,36 @@ const deleteContact = (id) => {
         router.delete(`/contacts/${id}`);
     }
 };
+
+const exportCSV = () => {
+    const headers = ['First Name', 'Last Name', 'Email', 'Phone', 'Company', 'Job Title'];
+    const rows = (props.contacts?.data || []).map(c => [
+        c.first_name, c.last_name || '', c.email || '', c.phone || '',
+        c.company || '', c.job_title || '',
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(c => `"${(c || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'contacts.csv'; a.click();
+    URL.revokeObjectURL(url);
+};
 </script>
 
 <template>
     <div>
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('contacts.title') }}</h1>
-            <button @click="showModal = true" class="btn-primary">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                {{ t('contacts.new') }}
-            </button>
+            <div class="flex items-center gap-2">
+                <button @click="exportCSV" class="btn-secondary flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    CSV
+                </button>
+                <button @click="openCreate" class="btn-primary">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    {{ t('contacts.new') }}
+                </button>
+            </div>
         </div>
 
         <!-- Search -->
@@ -76,9 +125,14 @@ const deleteContact = (id) => {
                             <p v-if="contact.company" class="text-xs text-gray-500">{{ contact.job_title ? `${contact.job_title} @ ` : '' }}{{ contact.company }}</p>
                         </div>
                     </div>
-                    <button @click="deleteContact(contact.id)" class="text-gray-400 hover:text-red-500 p-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                    </button>
+                    <div class="flex items-center gap-1">
+                        <button @click="openEdit(contact)" class="text-gray-400 hover:text-primary-500 p-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </button>
+                        <button @click="deleteContact(contact.id)" class="text-gray-400 hover:text-red-500 p-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="mt-3 space-y-1 text-sm text-gray-500">
                     <p v-if="contact.email" class="flex items-center gap-2">
@@ -96,11 +150,11 @@ const deleteContact = (id) => {
             </div>
         </div>
 
-        <!-- Create Contact Modal -->
+        <!-- Create / Edit Contact Modal -->
         <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-y-auto py-8" @click.self="showModal = false">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg p-6 mx-4">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('contacts.new') }}</h3>
-                <form @submit.prevent="createContact" class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ editingContact ? t('common.edit') : t('contacts.new') }}</h3>
+                <form @submit.prevent="submitForm" class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('contacts.first_name') }} *</label>
@@ -146,7 +200,7 @@ const deleteContact = (id) => {
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" @click="showModal = false" class="btn-secondary">{{ t('common.cancel') }}</button>
-                        <button type="submit" :disabled="form.processing" class="btn-primary">{{ t('common.create') }}</button>
+                        <button type="submit" :disabled="form.processing" class="btn-primary">{{ editingContact ? t('common.save') : t('common.create') }}</button>
                     </div>
                 </form>
             </div>
