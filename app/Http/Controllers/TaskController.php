@@ -13,13 +13,25 @@ class TaskController extends Controller
     public function index(Request $request): Response
     {
         $user = $request->user();
-        $tasks = $user->tasks()
+        $projectIds = $user->projects()->pluck('projects.id')
+            ->merge($user->ownedProjects()->pluck('id'));
+
+        $tasks = Task::where(function ($q) use ($user, $projectIds) {
+                $q->where('assigned_to', $user->id)
+                  ->orWhere('created_by', $user->id)
+                  ->orWhereIn('project_id', $projectIds);
+            })
             ->with('project:id,name,color', 'assignee:id,name,avatar')
             ->orderBy('due_date')
             ->get();
 
+        $projects = $user->projects()->get(['projects.id', 'projects.name', 'projects.color'])
+            ->merge($user->ownedProjects()->get(['id', 'name', 'color']))
+            ->unique('id');
+
         return Inertia::render('Tasks/Index', [
             'tasks' => $tasks,
+            'projects' => $projects,
         ]);
     }
 

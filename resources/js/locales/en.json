@@ -105,7 +105,8 @@
         "missed": "Missed",
         "created": "Goal created successfully",
         "updated": "Goal updated successfully",
-        "deleted": "Goal deleted successfully"
+        "deleted": "Goal deleted successfully",
+        "no_goals": "No goals yet. Create your first goal!"
     },
     "notes": {
         "title": "Notes",

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Goal;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,9 +18,14 @@ class DashboardController extends Controller
         $ownedProjects = $user->ownedProjects()->withCount('tasks')->get();
         $allProjects = $projects->merge($ownedProjects)->unique('id');
 
-        $upcomingTasks = $user->tasks()
-            ->where('status', '!=', 'done')
-            ->where('status', '!=', 'cancelled')
+        $projectIds = $allProjects->pluck('id');
+
+        $upcomingTasks = Task::where(function ($q) use ($user, $projectIds) {
+                $q->where('assigned_to', $user->id)
+                  ->orWhere('created_by', $user->id)
+                  ->orWhereIn('project_id', $projectIds);
+            })
+            ->whereNotIn('status', ['done', 'cancelled'])
             ->whereNotNull('due_date')
             ->orderBy('due_date')
             ->limit(10)
@@ -43,7 +50,17 @@ class DashboardController extends Controller
                 ],
             ]);
 
-        $taskEvents = $upcomingTasks->map(fn ($task) => [
+        $allTasksForCalendar = Task::where(function ($q) use ($user, $projectIds) {
+                $q->where('assigned_to', $user->id)
+                  ->orWhere('created_by', $user->id)
+                  ->orWhereIn('project_id', $projectIds);
+            })
+            ->whereNotIn('status', ['done', 'cancelled'])
+            ->whereNotNull('due_date')
+            ->with('project:id,name,color')
+            ->get();
+
+        $taskEvents = $allTasksForCalendar->map(fn ($task) => [
             'id' => 'task-' . $task->id,
             'title' => $task->title,
             'start' => $task->due_date->toIso8601String(),
@@ -58,15 +75,48 @@ class DashboardController extends Controller
             ],
         ]);
 
+        $goals = Goal::whereIn('project_id', $projectIds)
+            ->whereNotNull('target_date')
+            ->whereNotIn('status', ['achieved', 'missed'])
+            ->with('project:id,name,color')
+            ->get();
+
+        $goalEvents = $goals->map(fn ($goal) => [
+            'id' => 'goal-' . $goal->id,
+            'title' => $goal->title,
+            'start' => $goal->target_date->toIso8601String(),
+            'allDay' => true,
+            'color' => $goal->project?->color ?? '#8b5cf6',
+            'extendedProps' => [
+                'type' => 'goal',
+                'project_id' => $goal->project_id,
+                'project_name' => $goal->project?->name,
+                'progress' => $goal->progress,
+                'status' => $goal->status,
+            ],
+        ]);
+
         return Inertia::render('Dashboard', [
             'projects' => $allProjects,
             'upcomingTasks' => $upcomingTasks,
-            'calendarEvents' => $calendarEvents->merge($taskEvents)->values(),
+            'calendarEvents' => $calendarEvents->merge($taskEvents)->merge($goalEvents)->values(),
             'stats' => [
                 'total_projects' => $allProjects->count(),
-                'active_tasks' => $user->tasks()->whereNotIn('status', ['done', 'cancelled'])->count(),
-                'due_today' => $user->tasks()->whereDate('due_date', today())->count(),
-                'overdue' => $user->tasks()->where('due_date', '<', now())->whereNotIn('status', ['done', 'cancelled'])->count(),
+                'active_tasks' => Task::where(function ($q) use ($user, $projectIds) {
+                    $q->where('assigned_to', $user->id)
+                      ->orWhere('created_by', $user->id)
+                      ->orWhereIn('project_id', $projectIds);
+                })->whereNotIn('status', ['done', 'cancelled'])->count(),
+                'due_today' => Task::where(function ($q) use ($user, $projectIds) {
+                    $q->where('assigned_to', $user->id)
+                      ->orWhere('created_by', $user->id)
+                      ->orWhereIn('project_id', $projectIds);
+                })->whereDate('due_date', today())->count(),
+                'overdue' => Task::where(function ($q) use ($user, $projectIds) {
+                    $q->where('assigned_to', $user->id)
+                      ->orWhere('created_by', $user->id)
+                      ->orWhereIn('project_id', $projectIds);
+                })->where('due_date', '<', now())->whereNotIn('status', ['done', 'cancelled'])->count(),
             ],
         ]);
     }
