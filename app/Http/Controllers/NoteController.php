@@ -15,11 +15,18 @@ class NoteController extends Controller
             ->with('project:id,name,color')
             ->orderByDesc('is_pinned')
             ->latest()
+            ->when($request->search, fn ($q, $search) =>
+                $q->where(fn ($q) =>
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhere('body', 'like', "%{$search}%")
+                )
+            )
             ->when($request->project_id, fn ($q) => $q->where('project_id', $request->project_id))
             ->paginate(20);
 
         return Inertia::render('Notes/Index', [
             'notes' => $notes,
+            'filters' => $request->only(['search', 'project_id']),
         ]);
     }
 

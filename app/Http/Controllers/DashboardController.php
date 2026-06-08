@@ -127,6 +127,49 @@ class DashboardController extends Controller
                       ->orWhereIn('project_id', $projectIds);
                 })->where('due_date', '<', now())->whereNotIn('status', ['done', 'cancelled'])->count(),
             ],
+            'recentActivity' => $this->getRecentActivity($user, $projectIds),
         ]);
+    }
+
+    private function getRecentActivity($user, $projectIds): array
+    {
+        $recentTasks = Task::where(function ($q) use ($user, $projectIds) {
+                $q->where('assigned_to', $user->id)
+                  ->orWhere('created_by', $user->id)
+                  ->orWhereIn('project_id', $projectIds);
+            })
+            ->with('project:id,name,color')
+            ->latest('updated_at')
+            ->limit(5)
+            ->get()
+            ->map(fn ($t) => [
+                'type' => 'task',
+                'title' => $t->title,
+                'status' => $t->status,
+                'project_name' => $t->project?->name,
+                'project_color' => $t->project?->color,
+                'time' => $t->updated_at->toIso8601String(),
+            ]);
+
+        $recentGoals = Goal::whereIn('project_id', $projectIds)
+            ->with('project:id,name,color')
+            ->latest('updated_at')
+            ->limit(5)
+            ->get()
+            ->map(fn ($g) => [
+                'type' => 'goal',
+                'title' => $g->title,
+                'status' => $g->status,
+                'progress' => $g->progress,
+                'project_name' => $g->project?->name,
+                'project_color' => $g->project?->color,
+                'time' => $g->updated_at->toIso8601String(),
+            ]);
+
+        return $recentTasks->merge($recentGoals)
+            ->sortByDesc('time')
+            ->take(8)
+            ->values()
+            ->toArray();
     }
 }

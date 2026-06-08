@@ -18,6 +18,7 @@ class Document extends Model
         'documentable_type',
         'documentable_id',
         'original_name',
+        'folder',
         'storage_path',
         'mime_type',
         'size_bytes',

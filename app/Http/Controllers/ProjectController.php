@@ -16,8 +16,13 @@ class ProjectController extends Controller
         $ownedProjects = $user->ownedProjects()->withCount(['tasks', 'members', 'goals'])->get();
         $allProjects = $projects->merge($ownedProjects)->unique('id');
 
+        $allProjects->each(function ($project) {
+            $project->done_tasks_count = $project->tasks()->where('status', 'done')->count();
+        });
+
         return Inertia::render('Projects/Index', [
             'projects' => $allProjects,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 

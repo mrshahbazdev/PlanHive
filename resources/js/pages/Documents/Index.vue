@@ -4,15 +4,15 @@ import { useForm, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-defineProps({ documents: Object });
+const props = defineProps({ documents: Object, folders: { type: Array, default: () => [] }, filters: Object });
 
 const dragOver = ref(false);
 const previewDoc = ref(null);
-
-const form = useForm({
-    file: null,
-    project_id: null,
-});
+const activeFolder = ref(props.filters?.folder || null);
+const search = ref(props.filters?.search || '');
+const showFolderInput = ref(false);
+const newFolderName = ref('');
+const uploadFolder = ref(null);
 
 const handleDrop = (e) => {
     dragOver.value = false;
@@ -28,12 +28,38 @@ const handleFileSelect = (e) => {
 const uploadFile = (file) => {
     const formData = new FormData();
     formData.append('file', file);
+    if (uploadFolder.value || activeFolder.value) {
+        formData.append('folder', uploadFolder.value || activeFolder.value);
+    }
     router.post('/documents', formData, { forceFormData: true });
 };
 
 const deleteDoc = (id) => {
     if (confirm(t('common.confirm_delete'))) {
         router.delete(`/documents/${id}`);
+    }
+};
+
+const filterByFolder = (folder) => {
+    activeFolder.value = folder;
+    const params = {};
+    if (folder) params.folder = folder;
+    if (search.value) params.search = search.value;
+    router.get('/documents', params, { preserveState: true });
+};
+
+const doSearch = () => {
+    const params = {};
+    if (activeFolder.value) params.folder = activeFolder.value;
+    if (search.value) params.search = search.value;
+    router.get('/documents', params, { preserveState: true });
+};
+
+const createFolder = () => {
+    if (newFolderName.value.trim()) {
+        uploadFolder.value = newFolderName.value.trim();
+        newFolderName.value = '';
+        showFolderInput.value = false;
     }
 };
 
@@ -67,6 +93,35 @@ const fileIcon = (mime) => {
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('nav.documents') }}</h1>
         </div>
 
+        <!-- Search & Folder Filter -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+            <div class="relative flex-1 max-w-md">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input v-model="search" type="text" :placeholder="t('common.search')" class="input-field pl-10" @keyup.enter="doSearch" />
+            </div>
+            <div class="flex gap-2 flex-wrap items-center">
+                <button @click="filterByFolder(null)"
+                    :class="['px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                        !activeFolder ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200']">
+                    {{ t('common.all') || 'All' }}
+                </button>
+                <button v-for="folder in folders" :key="folder" @click="filterByFolder(folder)"
+                    :class="['px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                        activeFolder === folder ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200']">
+                    <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                    {{ folder }}
+                </button>
+                <button v-if="!showFolderInput" @click="showFolderInput = true" class="px-2 py-1.5 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600">
+                    + Folder
+                </button>
+                <div v-else class="flex items-center gap-1">
+                    <input v-model="newFolderName" type="text" class="input-field text-xs py-1 px-2 w-32" placeholder="Folder name" @keyup.enter="createFolder" />
+                    <button @click="createFolder" class="btn-primary text-xs px-2 py-1">OK</button>
+                    <button @click="showFolderInput = false" class="text-gray-400 hover:text-gray-600 text-xs px-1">X</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Upload Zone -->
         <div
             @dragover.prevent="dragOver = true"
@@ -79,6 +134,7 @@ const fileIcon = (mime) => {
             <input ref="fileInput" type="file" class="hidden" @change="handleFileSelect" />
             <svg class="w-12 h-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
             <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('documents.drag_drop') }}</p>
+            <p v-if="activeFolder || uploadFolder" class="text-xs text-primary-500 mt-1">Uploading to: {{ uploadFolder || activeFolder }}</p>
             <p class="text-xs text-gray-400 mt-1">Max 50MB</p>
         </div>
 
@@ -100,7 +156,14 @@ const fileIcon = (mime) => {
                 <!-- Info -->
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ doc.original_name }}</p>
-                    <p class="text-xs text-gray-400">{{ formatSize(doc.size_bytes) }} &middot; {{ doc.mime_type }}</p>
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <span>{{ formatSize(doc.size_bytes) }}</span>
+                        <span v-if="doc.folder" class="flex items-center gap-1 text-primary-500">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                            {{ doc.folder }}
+                        </span>
+                        <span>{{ doc.mime_type }}</span>
+                    </div>
                 </div>
 
                 <!-- Actions -->

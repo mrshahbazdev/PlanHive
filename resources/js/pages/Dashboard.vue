@@ -15,7 +15,16 @@ const props = defineProps({
     calendarEvents: Array,
     stats: Object,
     goalsProgress: { type: Array, default: () => [] },
+    recentActivity: { type: Array, default: () => [] },
 });
+
+const timeAgo = (date) => {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    if (seconds < 60) return 'Just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    return `${Math.floor(seconds / 86400)}d ago`;
+};
 
 const showEventModal = ref(false);
 const newEvent = ref({ title: '', start_at: '', end_at: '', project_id: null, all_day: false });
@@ -159,6 +168,32 @@ const getPriorityColor = (priority) => {
                                 <div class="bg-primary-500 h-1.5 rounded-full transition-all" :style="{ width: `${goal.progress}%` }"></div>
                             </div>
                             <p class="text-xs text-gray-400 mt-0.5">{{ goal.project_name }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card p-5">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-4">{{ t('dashboard.recent_activity') || 'Recent Activity' }}</h3>
+                    <div v-if="recentActivity.length === 0" class="text-sm text-gray-500 dark:text-gray-400 py-4 text-center">
+                        No recent activity
+                    </div>
+                    <div v-else class="space-y-3">
+                        <div v-for="(item, idx) in recentActivity" :key="idx" class="flex items-start gap-3">
+                            <div :class="['w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-white', item.type === 'task' ? 'bg-amber-500' : 'bg-purple-500']">
+                                {{ item.type === 'task' ? 'T' : 'G' }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-900 dark:text-white truncate">{{ item.title }}</p>
+                                <div class="flex items-center gap-2 text-xs text-gray-400">
+                                    <span v-if="item.project_name" class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full" :style="{ backgroundColor: item.project_color || '#14b8a6' }"></span>
+                                        {{ item.project_name }}
+                                    </span>
+                                    <span class="capitalize">{{ item.status }}</span>
+                                    <span>{{ timeAgo(item.time) }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

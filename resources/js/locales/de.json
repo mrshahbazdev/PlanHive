@@ -43,7 +43,8 @@
         "due_today": "Heute fällig",
         "overdue": "Überfällig",
         "no_events": "Keine Termine für heute",
-        "no_deadlines": "Keine anstehenden Fristen"
+        "no_deadlines": "Keine anstehenden Fristen",
+        "recent_activity": "Letzte Aktivität"
     },
     "projects": {
         "title": "Projekte",
@@ -87,7 +88,8 @@
         "updated": "Aufgabe erfolgreich aktualisiert",
         "deleted": "Aufgabe erfolgreich gelöscht",
         "status_updated": "Aufgabenstatus aktualisiert",
-        "no_tasks": "Noch keine Aufgaben"
+        "no_tasks": "Noch keine Aufgaben",
+        "progress": "Fortschritt"
     },
     "goals": {
         "title": "Ziele",
@@ -167,7 +169,9 @@
         "actions": "Aktionen",
         "confirm_delete": "Sind Sie sicher, dass Sie dies löschen möchten?",
         "no_results": "Keine Ergebnisse gefunden",
-        "loading": "Laden..."
+        "loading": "Laden...",
+        "all": "Alle",
+        "export_csv": "CSV exportieren"
     },
     "integrations": {
         "title": "Integrationen",
