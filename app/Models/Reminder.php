@@ -18,6 +18,7 @@ class Reminder extends Model
         'remindable_id',
         'remind_at',
         'channel',
+        'recurrence',
         'is_sent',
         'sent_at',
     ];

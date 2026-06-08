@@ -58,6 +58,21 @@ const deleteGoal = (goalId) => {
     }
 };
 
+const exportCSV = () => {
+    const headers = ['Title', 'Status', 'Progress', 'Target Date', 'Project'];
+    const rows = (props.goals?.data || []).map(g => [
+        g.title, g.status, `${g.progress}%`,
+        g.target_date ? new Date(g.target_date).toLocaleDateString() : '',
+        g.project?.name || '',
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(c => `"${(c || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'goals.csv'; a.click();
+    URL.revokeObjectURL(url);
+};
+
 const statusColors = {
     not_started: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
     in_progress: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
@@ -70,10 +85,16 @@ const statusColors = {
     <div>
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('goals.title') }}</h1>
-            <button @click="openCreate" class="btn-primary text-sm flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                {{ t('goals.new') }}
-            </button>
+            <div class="flex items-center gap-3">
+                <button @click="exportCSV" class="btn-secondary text-sm flex items-center" title="Export CSV">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    CSV
+                </button>
+                <button @click="openCreate" class="btn-primary text-sm flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    {{ t('goals.new') }}
+                </button>
+            </div>
         </div>
 
         <div v-if="!goals?.data?.length" class="card p-12 text-center">

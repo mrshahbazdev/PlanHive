@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reminder;
+use App\Models\Task;
+use App\Models\Goal;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -11,12 +13,36 @@ class ReminderController extends Controller
 {
     public function index(Request $request): Response
     {
-        $reminders = $request->user()->reminders()
+        $user = $request->user();
+
+        $reminders = $user->reminders()
+            ->with('remindable')
             ->orderBy('remind_at')
             ->paginate(20);
 
+        $projectIds = $user->projects()->pluck('projects.id')
+            ->merge($user->ownedProjects()->pluck('id'));
+
+        $tasks = Task::where(function ($q) use ($user, $projectIds) {
+                $q->where('assigned_to', $user->id)
+                  ->orWhere('created_by', $user->id)
+                  ->orWhereIn('project_id', $projectIds);
+            })
+            ->whereNotIn('status', ['done', 'cancelled'])
+            ->select('id', 'title')
+            ->orderBy('title')
+            ->get();
+
+        $goals = Goal::whereIn('project_id', $projectIds)
+            ->whereNotIn('status', ['achieved', 'missed'])
+            ->select('id', 'title')
+            ->orderBy('title')
+            ->get();
+
         return Inertia::render('Reminders/Index', [
             'reminders' => $reminders,
+            'tasks' => $tasks,
+            'goals' => $goals,
         ]);
     }
 
@@ -26,11 +52,19 @@ class ReminderController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'remind_at' => ['required', 'date', 'after:now'],
             'channel' => ['required', 'in:in_app,email,push,teams'],
-            'remindable_type' => ['nullable', 'string'],
+            'recurrence' => ['nullable', 'in:daily,weekly,monthly'],
+            'remindable_type' => ['nullable', 'string', 'in:task,goal'],
             'remindable_id' => ['nullable', 'integer'],
         ]);
 
         $validated['user_id'] = $request->user()->id;
+
+        if (!empty($validated['remindable_type'])) {
+            $validated['remindable_type'] = $validated['remindable_type'] === 'task'
+                ? Task::class
+                : Goal::class;
+        }
+
         Reminder::create($validated);
 
         return back()->with('success', 'Reminder created successfully');

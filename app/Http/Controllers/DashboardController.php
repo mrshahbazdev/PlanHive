@@ -96,10 +96,19 @@ class DashboardController extends Controller
             ],
         ]);
 
+        $goalsProgress = $goals->map(fn ($goal) => [
+            'id' => $goal->id,
+            'title' => $goal->title,
+            'progress' => $goal->progress,
+            'status' => $goal->status,
+            'project_name' => $goal->project?->name,
+        ]);
+
         return Inertia::render('Dashboard', [
             'projects' => $allProjects,
             'upcomingTasks' => $upcomingTasks,
             'calendarEvents' => $calendarEvents->merge($taskEvents)->merge($goalEvents)->values(),
+            'goalsProgress' => $goalsProgress,
             'stats' => [
                 'total_projects' => $allProjects->count(),
                 'active_tasks' => Task::where(function ($q) use ($user, $projectIds) {
