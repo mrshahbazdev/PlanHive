@@ -14,6 +14,7 @@ const props = defineProps({
     upcomingTasks: Array,
     calendarEvents: Array,
     stats: Object,
+    goalsProgress: { type: Array, default: () => [] },
 });
 
 const showEventModal = ref(false);
@@ -40,11 +41,27 @@ const calendarOptions = computed(() => ({
     },
     eventDrop(info) {
         const eventId = info.event.id;
-        if (String(eventId).startsWith('task-')) return;
+        if (String(eventId).startsWith('task-') || String(eventId).startsWith('goal-')) return;
         axios.put(`/api/calendar-events/${eventId}`, {
             start_at: info.event.start.toISOString(),
             end_at: (info.event.end || info.event.start).toISOString(),
         });
+    },
+    eventDidMount(info) {
+        const ep = info.event.extendedProps;
+        let tooltipText = info.event.title;
+        if (ep.type === 'task') {
+            tooltipText += `\n${t('nav.projects')}: ${ep.project_name || '—'}`;
+            tooltipText += `\n${t('tasks.priority')}: ${ep.priority || '—'}`;
+            tooltipText += `\n${t('tasks.status')}: ${ep.status || '—'}`;
+        } else if (ep.type === 'goal') {
+            tooltipText += `\n${t('nav.projects')}: ${ep.project_name || '—'}`;
+            tooltipText += `\n${t('goals.progress')}: ${ep.progress ?? 0}%`;
+        } else if (ep.description || ep.location) {
+            if (ep.description) tooltipText += `\n${ep.description}`;
+            if (ep.location) tooltipText += `\n📍 ${ep.location}`;
+        }
+        info.el.setAttribute('title', tooltipText);
     },
 }));
 
@@ -122,6 +139,26 @@ const getPriorityColor = (priority) => {
                             <span :class="[getPriorityColor(task.priority), 'text-xs px-2 py-0.5 rounded-full font-medium']">
                                 {{ t(`tasks.${task.priority}`) }}
                             </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goals Progress Widget -->
+                <div class="card p-5">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-4">{{ t('goals.title') }}</h3>
+                    <div v-if="goalsProgress.length === 0" class="text-sm text-gray-500 dark:text-gray-400 py-4 text-center">
+                        {{ t('goals.no_goals') }}
+                    </div>
+                    <div v-else class="space-y-3">
+                        <div v-for="goal in goalsProgress.slice(0, 5)" :key="goal.id">
+                            <div class="flex items-center justify-between mb-1">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate flex-1">{{ goal.title }}</p>
+                                <span class="text-xs text-gray-500 ml-2">{{ goal.progress }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                <div class="bg-primary-500 h-1.5 rounded-full transition-all" :style="{ width: `${goal.progress}%` }"></div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-0.5">{{ goal.project_name }}</p>
                         </div>
                     </div>
                 </div>
