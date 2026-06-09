@@ -107,7 +107,7 @@ const bulkDelete = () => {
 
 // Export to CSV
 const exportCSV = () => {
-    const headers = ['Title', 'Status', 'Priority', 'Due Date', 'Project'];
+    const headers = [t('common.title'), t('tasks.status'), t('tasks.priority'), t('tasks.due_date'), t('nav.projects')];
     const rows = props.tasks.map(t => [
         t.title, t.status, t.priority,
         t.due_date ? new Date(t.due_date).toLocaleDateString() : '',
@@ -143,7 +143,7 @@ const statusColors = {
                             @click="filter = f"
                             :class="['px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
                                      filter === f ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400']">
-                        {{ f === 'all' ? 'All' : t(`tasks.${f}`) }}
+                        {{ f === 'all' ? t('common.all') : t(`tasks.${f}`) }}
                     </button>
                 </div>
                 <button @click="exportCSV" class="btn-secondary text-sm flex items-center" title="Export CSV">
@@ -159,10 +159,10 @@ const statusColors = {
 
         <!-- Bulk Action Bar -->
         <div v-if="showBulkBar" class="mb-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl flex items-center gap-3 border border-primary-200 dark:border-primary-800">
-            <span class="text-sm font-medium text-primary-700 dark:text-primary-400">{{ selectedTasks.length }} selected</span>
+            <span class="text-sm font-medium text-primary-700 dark:text-primary-400">{{ selectedTasks.length }} {{ t('tasks.selected') }}</span>
             <div class="flex gap-2 ml-auto">
                 <select @change="bulkUpdateStatus($event.target.value); $event.target.value = ''" class="text-xs border rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
-                    <option value="">Change status...</option>
+                    <option value="">{{ t('tasks.change_status') }}</option>
                     <option v-for="s in ['todo', 'in_progress', 'review', 'done', 'cancelled']" :key="s" :value="s">{{ t(`tasks.${s}`) }}</option>
                 </select>
                 <button @click="bulkDelete" class="text-xs px-3 py-1.5 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-lg hover:bg-red-200">
@@ -184,7 +184,7 @@ const statusColors = {
             <div class="flex items-center gap-3 px-4 py-2 text-xs text-gray-500">
                 <input type="checkbox" :checked="selectedTasks.length === filteredTasks.length && filteredTasks.length > 0" @change="toggleSelectAll"
                        class="w-4 h-4 text-primary-500 rounded border-gray-300 focus:ring-primary-500" />
-                <span>Select all</span>
+                <span>{{ t('tasks.select_all') }}</span>
             </div>
             <div v-for="task in filteredTasks" :key="task.id"
                  class="card p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -233,7 +233,7 @@ const statusColors = {
                         </span>
                     </div>
                     <div v-if="detailTask.description" class="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-wrap">{{ detailTask.description }}</div>
-                    <div v-else class="text-sm text-gray-400 italic">No description</div>
+                    <div v-else class="text-sm text-gray-400 italic">{{ t('common.no_description') }}</div>
                     <div class="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
                         <div v-if="detailTask.due_date" class="flex items-center gap-2 text-sm">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>

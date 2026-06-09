@@ -64,7 +64,7 @@ const typeColors = {
                         @click="searchType = tp"
                         :class="['px-3 py-1.5 rounded-lg text-xs font-medium transition-colors capitalize',
                                  searchType === tp ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600']">
-                    {{ tp }}
+                    {{ tp === 'all' ? t('common.all') : t(`nav.${tp}`) }}
                 </button>
             </div>
         </div>
@@ -89,7 +89,7 @@ const typeColors = {
                     <p class="text-xs text-gray-500 truncate">{{ item.subtitle }}</p>
                 </div>
                 <span :class="['text-xs px-2 py-1 rounded-full font-medium capitalize', typeColors[item.type] || 'bg-gray-100 text-gray-600']">
-                    {{ item.type }}
+                    {{ t(`nav.${item.type}s`) || item.type }}
                 </span>
             </Link>
         </div>

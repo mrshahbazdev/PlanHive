@@ -31,7 +31,7 @@ const { t } = useI18n();
         <main class="flex flex-col items-center justify-center px-8 pt-20 pb-32 text-center">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-900/30 border border-primary-700/30 text-primary-400 text-sm font-medium mb-8">
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                Multi-Project Management SaaS
+                {{ t('welcome.badge') }}
             </div>
 
             <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight max-w-4xl">
@@ -39,7 +39,7 @@ const { t } = useI18n();
             </h1>
 
             <p class="mt-6 text-lg text-gray-400 max-w-2xl">
-                Manage multiple projects, track tasks, set reminders, take notes, upload documents, and sync with Outlook & Teams — all from one beautiful calendar-first dashboard.
+                {{ t('welcome.subtitle') }}
             </p>
 
             <div class="flex items-center gap-4 mt-10">
@@ -58,7 +58,7 @@ const { t } = useI18n();
                         <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </div>
                     <h3 class="text-lg font-semibold text-white mb-2">{{ t('nav.calendar') }}</h3>
-                    <p class="text-gray-400 text-sm">Color-coded calendar as your homepage. See all projects, tasks, and meetings at a glance.</p>
+                    <p class="text-gray-400 text-sm">{{ t('welcome.feature_calendar') }}</p>
                 </div>
 
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-left">
@@ -66,7 +66,7 @@ const { t } = useI18n();
                         <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                     </div>
                     <h3 class="text-lg font-semibold text-white mb-2">{{ t('nav.tasks') }} & {{ t('nav.goals') }}</h3>
-                    <p class="text-gray-400 text-sm">Kanban boards, priorities, subtasks, and goal tracking across all your projects.</p>
+                    <p class="text-gray-400 text-sm">{{ t('welcome.feature_tasks') }}</p>
                 </div>
 
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-left">
@@ -74,7 +74,7 @@ const { t } = useI18n();
                         <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
                     <h3 class="text-lg font-semibold text-white mb-2">{{ t('nav.contacts') }}</h3>
-                    <p class="text-gray-400 text-sm">Manage contacts, scan business cards with OCR, and integrate with Outlook & Teams.</p>
+                    <p class="text-gray-400 text-sm">{{ t('welcome.feature_contacts') }}</p>
                 </div>
             </div>
         </main>

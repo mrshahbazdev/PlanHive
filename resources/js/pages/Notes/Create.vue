@@ -41,7 +41,7 @@ const submit = () => {
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('nav.projects') }}</label>
                     <select v-model="form.project_id" class="input-field">
-                        <option :value="null">-- None --</option>
+                        <option :value="null">{{ t('common.select') }}</option>
                         <option v-for="p in projects" :key="p.id" :value="p.id">{{ p.name }}</option>
                     </select>
                 </div>

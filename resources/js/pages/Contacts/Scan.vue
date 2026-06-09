@@ -58,7 +58,7 @@ const scanCard = async () => {
         scanResult.value = text;
         parseBusinessCard(text);
     } catch (err) {
-        error.value = 'OCR scan failed. Please try a clearer image.';
+        error.value = t('contacts.ocr_failed');
         console.error(err);
     } finally {
         scanning.value = false;
@@ -143,7 +143,7 @@ const reset = () => {
                     <input ref="fileInput" type="file" accept="image/*" capture="environment" class="hidden" @change="handleFile" />
                     <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('contacts.scan_card') }}</p>
-                    <p class="text-xs text-gray-400 mt-1">Take a photo or upload an image of a business card</p>
+                    <p class="text-xs text-gray-400 mt-1">{{ t('contacts.scan_help') }}</p>
                 </div>
 
                 <div v-else class="space-y-4">
@@ -156,7 +156,7 @@ const reset = () => {
 
                     <button v-if="!scanResult" @click="scanCard" :disabled="scanning" class="btn-primary w-full py-3">
                         <svg v-if="scanning" class="w-5 h-5 mr-2 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
-                        {{ scanning ? 'Scanning...' : 'Scan Business Card' }}
+                        {{ scanning ? t('contacts.scanning') : t('contacts.scan_card') }}
                     </button>
 
                     <div v-if="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
@@ -164,7 +164,7 @@ const reset = () => {
                     </div>
 
                     <div v-if="scanResult" class="card p-4">
-                        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Raw OCR Text</h3>
+                        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ t('contacts.raw_ocr') }}</h3>
                         <pre class="text-xs text-gray-500 whitespace-pre-wrap bg-gray-50 dark:bg-gray-900 rounded-lg p-3">{{ scanResult }}</pre>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ const reset = () => {
 
             <!-- Right: Extracted Data Form -->
             <div class="card p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Contact Details</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('contacts.contact_details') }}</h3>
                 <form @submit.prevent="saveContact" class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -210,7 +210,7 @@ const reset = () => {
                     </div>
                     <div class="flex gap-3 pt-2">
                         <button type="submit" class="btn-primary flex-1">{{ t('common.save') }}</button>
-                        <button type="button" @click="reset" class="btn-secondary">Reset</button>
+                        <button type="button" @click="reset" class="btn-secondary">{{ t('contacts.reset') }}</button>
                     </div>
                 </form>
             </div>

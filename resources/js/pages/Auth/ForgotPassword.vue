@@ -24,7 +24,7 @@ const submit = () => {
 
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">{{ t('auth.forgot_password') }}</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">Enter your email and we'll send you a reset link.</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">{{ t('auth.reset_email_hint') }}</p>
 
                 <form @submit.prevent="submit" class="space-y-5">
                     <div>
@@ -32,11 +32,11 @@ const submit = () => {
                         <input v-model="form.email" type="email" required autofocus class="input-field" />
                         <p v-if="form.errors.email" class="mt-1 text-sm text-red-500">{{ form.errors.email }}</p>
                     </div>
-                    <button type="submit" :disabled="form.processing" class="btn-primary w-full py-3">Send Reset Link</button>
+                    <button type="submit" :disabled="form.processing" class="btn-primary w-full py-3">{{ t('auth.send_reset_link') }}</button>
                 </form>
 
                 <p class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                    <Link href="/login" class="text-primary-600 hover:text-primary-700 font-medium">Back to {{ t('auth.login') }}</Link>
+                    <Link href="/login" class="text-primary-600 hover:text-primary-700 font-medium">{{ t('auth.back_to') }} {{ t('auth.login') }}</Link>
                 </p>
             </div>
         </div>

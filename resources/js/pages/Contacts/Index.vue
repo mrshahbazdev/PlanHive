@@ -70,7 +70,7 @@ const deleteContact = (id) => {
 };
 
 const exportCSV = () => {
-    const headers = ['First Name', 'Last Name', 'Email', 'Phone', 'Company', 'Job Title'];
+    const headers = [t('contacts.first_name'), t('contacts.last_name'), t('contacts.email'), t('contacts.phone'), t('contacts.company'), t('contacts.job_title')];
     const rows = (props.contacts?.data || []).map(c => [
         c.first_name, c.last_name || '', c.email || '', c.phone || '',
         c.company || '', c.job_title || '',
@@ -188,7 +188,7 @@ const exportCSV = () => {
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('contacts.tags') }}</label>
                         <div class="flex gap-2">
-                            <input v-model="newTag" type="text" class="input-field flex-1" @keyup.enter.prevent="addTag" placeholder="Add tag..." />
+                            <input v-model="newTag" type="text" class="input-field flex-1" @keyup.enter.prevent="addTag" :placeholder="t('contacts.add_tag')" />
                             <button type="button" @click="addTag" class="btn-secondary text-sm">+</button>
                         </div>
                         <div class="flex flex-wrap gap-1 mt-2">

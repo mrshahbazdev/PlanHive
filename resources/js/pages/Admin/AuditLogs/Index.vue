@@ -1,7 +1,10 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AppLayout from '../../../layouts/AppLayout.vue';
+
+const { t } = useI18n();
 
 const props = defineProps({
     logs: Object,
@@ -30,8 +33,8 @@ const filterByAction = (a) => {
     <AppLayout>
         <div class="p-6 max-w-7xl mx-auto">
             <div class="flex items-center justify-between mb-6">
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Audit Logs</h1>
-                <Link href="/admin" class="text-sm text-primary-600 hover:underline">← Back to Admin</Link>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('admin.audit_logs') }}</h1>
+                <Link href="/admin" class="text-sm text-primary-600 hover:underline">← {{ t('admin.back_to_admin') }}</Link>
             </div>
 
             <!-- Filters -->
@@ -39,7 +42,7 @@ const filterByAction = (a) => {
                 <input
                     v-model="search"
                     type="text"
-                    placeholder="Search logs..."
+                    :placeholder="t('admin.search_logs')"
                     class="flex-1 max-w-md px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500"
                 />
                 <select
@@ -47,7 +50,7 @@ const filterByAction = (a) => {
                     @change="filterByAction(action)"
                     class="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100"
                 >
-                    <option value="">All Actions</option>
+                    <option value="">{{ t('admin.all_actions') }}</option>
                     <option v-for="a in actions" :key="a" :value="a">{{ a }}</option>
                 </select>
             </div>
@@ -57,11 +60,11 @@ const filterByAction = (a) => {
                 <table class="w-full">
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-700/50">
-                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">User</th>
-                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Action</th>
-                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Target</th>
-                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">IP</th>
-                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Date</th>
+                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('admin.user') }}</th>
+                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('admin.action') }}</th>
+                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('admin.target') }}</th>
+                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('admin.ip') }}</th>
+                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('admin.date') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -80,7 +83,7 @@ const filterByAction = (a) => {
                     </tbody>
                 </table>
 
-                <div v-if="!logs.data.length" class="p-8 text-center text-gray-500 dark:text-gray-400">No audit logs found</div>
+                <div v-if="!logs.data.length" class="p-8 text-center text-gray-500 dark:text-gray-400">{{ t('admin.no_logs') }}</div>
             </div>
 
             <!-- Pagination -->

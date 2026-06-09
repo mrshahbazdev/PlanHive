@@ -15,14 +15,14 @@ const showCreate = ref(false);
 const newToken = computed(() => page.props.flash?.token || null);
 const form = ref({ name: '', abilities: ['projects:read', 'tasks:read', 'contacts:read'] });
 
-const availableAbilities = [
-    { value: 'projects:read', label: 'Read Projects' },
-    { value: 'projects:write', label: 'Write Projects' },
-    { value: 'tasks:read', label: 'Read Tasks' },
-    { value: 'tasks:write', label: 'Write Tasks' },
-    { value: 'contacts:read', label: 'Read Contacts' },
-    { value: 'contacts:write', label: 'Write Contacts' },
-];
+const availableAbilities = computed(() => [
+    { value: 'projects:read', label: t('api.read_projects') },
+    { value: 'projects:write', label: t('api.write_projects') },
+    { value: 'tasks:read', label: t('api.read_tasks') },
+    { value: 'tasks:write', label: t('api.write_tasks') },
+    { value: 'contacts:read', label: t('api.read_contacts') },
+    { value: 'contacts:write', label: t('api.write_contacts') },
+]);
 
 const toggleAbility = (ability) => {
     const idx = form.value.abilities.indexOf(ability);
@@ -40,7 +40,7 @@ const createToken = () => {
 };
 
 const revokeToken = (id) => {
-    if (confirm('Revoke this token? This action cannot be undone.')) {
+    if (confirm(t('api.revoke_confirm'))) {
         router.delete(`/api-tokens/${id}`);
     }
 };
@@ -72,21 +72,21 @@ const methodColor = (m) => {
 <template>
     <AppLayout>
         <div class="p-6 max-w-5xl mx-auto">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">API & Tokens</h1>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">Manage API tokens and view endpoint documentation.</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ t('api.title') }}</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">{{ t('api.description') }}</p>
 
             <!-- New Token Flash -->
             <div v-if="newToken" class="mb-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
-                <p class="text-sm font-medium text-green-800 dark:text-green-400 mb-2">Token created! Copy it now — it won't be shown again.</p>
+                <p class="text-sm font-medium text-green-800 dark:text-green-400 mb-2">{{ t('api.token_created') }}</p>
                 <code class="block bg-white dark:bg-gray-800 p-3 rounded-lg text-sm font-mono text-gray-900 dark:text-gray-100 break-all">{{ newToken }}</code>
             </div>
 
             <!-- Token Management -->
             <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 mb-8">
                 <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">API Tokens</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('api.api_tokens') }}</h3>
                     <button @click="showCreate = !showCreate" class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700">
-                        {{ showCreate ? 'Cancel' : 'Create Token' }}
+                        {{ showCreate ? t('common.cancel') : t('api.create_token') }}
                     </button>
                 </div>
 
@@ -94,11 +94,11 @@ const methodColor = (m) => {
                 <div v-if="showCreate" class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30">
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Token Name</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('api.token_name') }}</label>
                             <input v-model="form.name" type="text" placeholder="e.g. Mobile App" class="w-full max-w-md px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Permissions</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t('api.permissions') }}</label>
                             <div class="flex flex-wrap gap-2">
                                 <button
                                     v-for="ab in availableAbilities"
@@ -108,7 +108,7 @@ const methodColor = (m) => {
                                 >{{ ab.label }}</button>
                             </div>
                         </div>
-                        <button @click="createToken" :disabled="!form.name" class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50">Create</button>
+                        <button @click="createToken" :disabled="!form.name" class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50">{{ t('common.create') }}</button>
                     </div>
                 </div>
 
@@ -118,20 +118,20 @@ const methodColor = (m) => {
                         <div>
                             <p class="font-medium text-gray-900 dark:text-white">{{ token.name }}</p>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                Created {{ new Date(token.created_at).toLocaleDateString() }}
-                                <span v-if="token.last_used_at"> · Last used {{ new Date(token.last_used_at).toLocaleDateString() }}</span>
+                                {{ t('api.created') }} {{ new Date(token.created_at).toLocaleDateString() }}
+                                <span v-if="token.last_used_at"> · {{ t('api.last_used') }} {{ new Date(token.last_used_at).toLocaleDateString() }}</span>
                             </p>
                         </div>
-                        <button @click="revokeToken(token.id)" class="text-xs px-3 py-1.5 rounded bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-200">Revoke</button>
+                        <button @click="revokeToken(token.id)" class="text-xs px-3 py-1.5 rounded bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-200">{{ t('api.revoke') }}</button>
                     </div>
-                    <div v-if="!tokens.length" class="p-8 text-center text-gray-500 dark:text-gray-400">No API tokens created yet</div>
+                    <div v-if="!tokens.length" class="p-8 text-center text-gray-500 dark:text-gray-400">{{ t('api.no_tokens') }}</div>
                 </div>
             </div>
 
             <!-- API Documentation -->
             <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                 <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">API Endpoints</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('api.endpoints') }}</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Base URL: <code class="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-xs">{your-domain}</code> · Auth: <code class="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-xs">Authorization: Bearer {token}</code></p>
                 </div>
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">

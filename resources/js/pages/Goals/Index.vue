@@ -59,7 +59,7 @@ const deleteGoal = (goalId) => {
 };
 
 const exportCSV = () => {
-    const headers = ['Title', 'Status', 'Progress', 'Target Date', 'Project'];
+    const headers = [t('common.title'), t('tasks.status'), t('goals.progress'), t('goals.target_date'), t('nav.projects')];
     const rows = (props.goals?.data || []).map(g => [
         g.title, g.status, `${g.progress}%`,
         g.target_date ? new Date(g.target_date).toLocaleDateString() : '',
