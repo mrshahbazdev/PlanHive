@@ -33,9 +33,9 @@ const deleteNote = () => {
                 <span class="w-3 h-3 rounded-full" :style="{ backgroundColor: note.project.color }"></span>
                 <span class="text-sm text-gray-500">{{ note.project.name }}</span>
             </div>
-            <div class="prose prose-sm dark:prose-invert max-w-none" v-html="note.body || '<p class=\'text-gray-400\'>No content</p>'"></div>
+            <div class="prose prose-sm dark:prose-invert max-w-none" v-html="note.body || `<p class='text-gray-400'>${t('notes.no_content')}</p>`"></div>
             <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-400">
-                Updated: {{ new Date(note.updated_at).toLocaleString() }}
+                {{ t('notes.updated_at') }}: {{ new Date(note.updated_at).toLocaleString() }}
             </div>
         </div>
     </div>

@@ -28,13 +28,13 @@ const filterByRole = (r) => {
 };
 
 const toggleAdmin = (user) => {
-    if (confirm(`Toggle admin for ${user.name}?`)) {
+    if (confirm(t('admin.toggle_admin_confirm', { name: user.name }))) {
         router.post(`/admin/users/${user.id}/toggle-admin`);
     }
 };
 
 const deleteUser = (user) => {
-    if (confirm(`Delete ${user.name}? This cannot be undone.`)) {
+    if (confirm(t('admin.delete_user_confirm', { name: user.name }))) {
         router.delete(`/admin/users/${user.id}`);
     }
 };
@@ -44,8 +44,8 @@ const deleteUser = (user) => {
     <AppLayout>
         <div class="p-6 max-w-7xl mx-auto">
             <div class="flex items-center justify-between mb-6">
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">User Management</h1>
-                <Link href="/admin" class="text-sm text-primary-600 hover:underline">← Back to Admin</Link>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('admin.user_management') }}</h1>
+                <Link href="/admin" class="text-sm text-primary-600 hover:underline">← {{ t('admin.back_to_admin') }}</Link>
             </div>
 
             <!-- Filters -->
@@ -53,13 +53,13 @@ const deleteUser = (user) => {
                 <input
                     v-model="search"
                     type="text"
-                    placeholder="Search users..."
+                    :placeholder="t('admin.search_users')"
                     class="flex-1 max-w-md px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500"
                 />
                 <div class="flex gap-2">
-                    <button @click="filterByRole('')" :class="['px-3 py-1.5 rounded-lg text-sm', !role ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300']">All</button>
-                    <button @click="filterByRole('admin')" :class="['px-3 py-1.5 rounded-lg text-sm', role === 'admin' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300']">Admins</button>
-                    <button @click="filterByRole('user')" :class="['px-3 py-1.5 rounded-lg text-sm', role === 'user' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300']">Users</button>
+                    <button @click="filterByRole('')" :class="['px-3 py-1.5 rounded-lg text-sm', !role ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300']">{{ t('common.all') }}</button>
+                    <button @click="filterByRole('admin')" :class="['px-3 py-1.5 rounded-lg text-sm', role === 'admin' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300']">{{ t('admin.admins') }}</button>
+                    <button @click="filterByRole('user')" :class="['px-3 py-1.5 rounded-lg text-sm', role === 'user' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300']">{{ t('admin.users_filter') }}</button>
                 </div>
             </div>
 
@@ -68,13 +68,13 @@ const deleteUser = (user) => {
                 <table class="w-full">
                     <thead>
                         <tr class="bg-gray-50 dark:bg-gray-700/50">
-                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">User</th>
-                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Role</th>
-                            <th class="text-center px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Projects</th>
-                            <th class="text-center px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tasks</th>
-                            <th class="text-center px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Notes</th>
-                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Joined</th>
-                            <th class="text-right px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('admin.user') }}</th>
+                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('admin.role') }}</th>
+                            <th class="text-center px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('nav.projects') }}</th>
+                            <th class="text-center px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('nav.tasks') }}</th>
+                            <th class="text-center px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('nav.notes') }}</th>
+                            <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('admin.joined') }}</th>
+                            <th class="text-right px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{{ t('admin.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -87,7 +87,7 @@ const deleteUser = (user) => {
                             </td>
                             <td class="px-6 py-4">
                                 <span :class="['px-2 py-1 text-xs rounded-full', user.is_admin ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400']">
-                                    {{ user.is_admin ? 'Admin' : 'User' }}
+                                    {{ user.is_admin ? t('admin.admin') : t('admin.user') }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-center text-sm text-gray-700 dark:text-gray-300">{{ user.owned_projects_count }}</td>
@@ -97,9 +97,9 @@ const deleteUser = (user) => {
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <button @click="toggleAdmin(user)" class="text-xs px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
-                                        {{ user.is_admin ? 'Remove Admin' : 'Make Admin' }}
+                                        {{ user.is_admin ? t('admin.remove_admin') : t('admin.make_admin') }}
                                     </button>
-                                    <button @click="deleteUser(user)" class="text-xs px-2 py-1 rounded bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40">Delete</button>
+                                    <button @click="deleteUser(user)" class="text-xs px-2 py-1 rounded bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40">{{ t('common.delete') }}</button>
                                 </div>
                             </td>
                         </tr>

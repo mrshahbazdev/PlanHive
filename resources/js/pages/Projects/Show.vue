@@ -154,7 +154,7 @@ const addMember = () => {
 };
 
 const removeMember = (userId) => {
-    if (confirm('Remove this member?')) {
+    if (confirm(t('projects.remove_member_confirm'))) {
         router.delete(`/projects/${props.project.id}/members/${userId}`);
     }
 };
@@ -312,11 +312,11 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
             <div class="flex justify-end mb-4">
                 <button @click="showMemberModal = true" class="btn-primary text-sm">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Add Member
+                    {{ t('projects.add_member') }}
                 </button>
             </div>
             <div v-if="!(project.members || []).length" class="card p-8 text-center">
-                <p class="text-gray-500">No members yet. Invite someone to collaborate!</p>
+                <p class="text-gray-500">{{ t('projects.no_members') }}</p>
             </div>
             <div v-else class="space-y-2">
                 <div v-for="member in project.members" :key="member.id" class="card p-4 flex items-center gap-4">
@@ -332,10 +332,10 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
                         @change="updateMemberRole(member.id, $event.target.value)"
                         class="text-xs px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                     >
-                        <option value="boss">Boss</option>
-                        <option value="manager">Manager</option>
-                        <option value="member">Member</option>
-                        <option value="viewer">Viewer</option>
+                        <option value="boss">{{ t('projects.role_boss') }}</option>
+                        <option value="manager">{{ t('projects.role_manager') }}</option>
+                        <option value="member">{{ t('projects.role_member') }}</option>
+                        <option value="viewer">{{ t('projects.role_viewer') }}</option>
                     </select>
                     <button @click="removeMember(member.id)" class="text-gray-400 hover:text-red-500 p-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -359,7 +359,7 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
                         <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-medium">{{ t(`tasks.${detailTask.status}`) }}</span>
                     </div>
                     <div v-if="detailTask.description" class="text-sm text-gray-600 dark:text-gray-400 whitespace-pre-wrap">{{ detailTask.description }}</div>
-                    <div v-else class="text-sm text-gray-400 italic">No description</div>
+                    <div v-else class="text-sm text-gray-400 italic">{{ t('common.no_description') }}</div>
                     <div class="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
                         <div v-if="detailTask.due_date" class="flex items-center gap-2 text-sm">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -372,7 +372,7 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
                     </div>
                     <!-- Subtasks -->
                     <div v-if="detailTask.subtasks?.length" class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Subtasks ({{ detailTask.subtasks.filter(s => s.status === 'done').length }}/{{ detailTask.subtasks.length }})</h4>
+                        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{{ t('tasks.subtasks') }} ({{ detailTask.subtasks.filter(s => s.status === 'done').length }}/{{ detailTask.subtasks.length }})</h4>
                         <div class="space-y-2">
                             <div v-for="sub in detailTask.subtasks" :key="sub.id" class="flex items-center gap-3">
                                 <input type="checkbox" :checked="sub.status === 'done'"
@@ -393,25 +393,25 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
         <!-- Add Member Modal -->
         <div v-if="showMemberModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="showMemberModal = false">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add Member</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('projects.add_member') }}</h3>
                 <form @submit.prevent="addMember" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('auth.email') }}</label>
                         <input v-model="memberForm.email" type="email" required class="input-field" placeholder="member@example.com" />
                         <p v-if="memberForm.errors.email" class="mt-1 text-sm text-red-500">{{ memberForm.errors.email }}</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('projects.role') }}</label>
                         <select v-model="memberForm.role" class="input-field">
-                            <option value="boss">Boss</option>
-                            <option value="manager">Manager</option>
-                            <option value="member">Member</option>
-                            <option value="viewer">Viewer</option>
+                            <option value="boss">{{ t('projects.role_boss') }}</option>
+                            <option value="manager">{{ t('projects.role_manager') }}</option>
+                            <option value="member">{{ t('projects.role_member') }}</option>
+                            <option value="viewer">{{ t('projects.role_viewer') }}</option>
                         </select>
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" @click="showMemberModal = false" class="btn-secondary">{{ t('common.cancel') }}</button>
-                        <button type="submit" :disabled="memberForm.processing" class="btn-primary">Add Member</button>
+                        <button type="submit" :disabled="memberForm.processing" class="btn-primary">{{ t('projects.add_member') }}</button>
                     </div>
                 </form>
             </div>

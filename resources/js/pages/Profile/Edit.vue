@@ -59,7 +59,7 @@ const timezones = [
 
         <!-- Profile Information -->
         <div class="card p-8">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Profile Information</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">{{ t('profile.profile_info') }}</h2>
             <form @submit.prevent="updateProfile" class="space-y-5">
                 <!-- Avatar -->
                 <div class="flex items-center gap-4">
@@ -68,7 +68,7 @@ const timezones = [
                     </div>
                     <div>
                         <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="uploadAvatar" />
-                        <button type="button" @click="avatarInput?.click()" class="btn-secondary text-sm">Change Avatar</button>
+                        <button type="button" @click="avatarInput?.click()" class="btn-secondary text-sm">{{ t('profile.change_avatar') }}</button>
                     </div>
                 </div>
 
@@ -93,7 +93,7 @@ const timezones = [
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Timezone</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.timezone') }}</label>
                         <select v-model="profileForm.timezone" class="input-field">
                             <option v-for="tz in timezones" :key="tz" :value="tz">{{ tz }}</option>
                         </select>
@@ -108,15 +108,15 @@ const timezones = [
 
         <!-- Change Password -->
         <div class="card p-8">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Change Password</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">{{ t('profile.change_password') }}</h2>
             <form @submit.prevent="updatePassword" class="space-y-5">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Current Password</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.current_password') }}</label>
                     <input v-model="passwordForm.current_password" type="password" required class="input-field" />
                     <p v-if="passwordForm.errors.current_password" class="mt-1 text-sm text-red-500">{{ passwordForm.errors.current_password }}</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">New Password</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.new_password') }}</label>
                     <input v-model="passwordForm.password" type="password" required class="input-field" />
                     <p v-if="passwordForm.errors.password" class="mt-1 text-sm text-red-500">{{ passwordForm.errors.password }}</p>
                 </div>
@@ -125,7 +125,7 @@ const timezones = [
                     <input v-model="passwordForm.password_confirmation" type="password" required class="input-field" />
                 </div>
                 <div class="flex justify-end pt-4">
-                    <button type="submit" :disabled="passwordForm.processing" class="btn-primary">Update Password</button>
+                    <button type="submit" :disabled="passwordForm.processing" class="btn-primary">{{ t('profile.update_password') }}</button>
                 </div>
             </form>
         </div>

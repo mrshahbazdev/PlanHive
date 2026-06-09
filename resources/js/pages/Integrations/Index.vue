@@ -28,7 +28,7 @@ const connectTeams = () => {
 };
 
 const disconnect = (provider) => {
-    if (confirm(`Disconnect ${provider}?`)) {
+    if (confirm(t('integrations.disconnect_confirm', { provider }))) {
         router.delete(`/integrations/${provider}`);
     }
 };
@@ -58,7 +58,7 @@ const testTeams = () => {
                         </svg>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-900 dark:text-white">Microsoft Outlook</h3>
+                        <h3 class="font-semibold text-gray-900 dark:text-white">{{ t('integrations.microsoft_outlook') }}</h3>
                         <p class="text-sm text-gray-500">{{ t('integrations.outlook_desc') }}</p>
                     </div>
                 </div>
@@ -66,19 +66,19 @@ const testTeams = () => {
                 <div v-if="integrations?.outlook" class="space-y-3">
                     <div class="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                        Connected{{ integrations.outlook.settings?.email ? ` — ${integrations.outlook.settings.email}` : '' }}
+                        {{ t('integrations.connected') }}{{ integrations.outlook.settings?.email ? ` — ${integrations.outlook.settings.email}` : '' }}
                     </div>
                     <div class="flex gap-2">
-                        <button @click="syncCalendar" class="btn-primary text-sm">Sync Calendar</button>
-                        <button @click="disconnect('outlook')" class="btn-danger text-sm">Disconnect</button>
+                        <button @click="syncCalendar" class="btn-primary text-sm">{{ t('integrations.sync_calendar') }}</button>
+                        <button @click="disconnect('outlook')" class="btn-danger text-sm">{{ t('integrations.disconnect') }}</button>
                     </div>
                 </div>
                 <div v-else>
                     <a v-if="microsoftConfigured" href="/integrations/outlook/connect" class="btn-primary text-sm">
-                        Connect Outlook
+                        {{ t('integrations.connect_outlook') }}
                     </a>
                     <button v-else @click="showMicrosoftAppModal = true" class="btn-primary text-sm">
-                        Configure Microsoft App
+                        {{ t('integrations.configure_ms_app') }}
                     </button>
                     <p v-if="!microsoftConfigured" class="mt-3 text-sm text-amber-600 dark:text-amber-400">
                         {{ t('integrations.config_required') }}
@@ -95,7 +95,7 @@ const testTeams = () => {
                         </svg>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-900 dark:text-white">Microsoft Teams</h3>
+                        <h3 class="font-semibold text-gray-900 dark:text-white">{{ t('integrations.microsoft_teams') }}</h3>
                         <p class="text-sm text-gray-500">{{ t('integrations.teams_desc') }}</p>
                     </div>
                 </div>
@@ -103,16 +103,16 @@ const testTeams = () => {
                 <div v-if="integrations?.teams" class="space-y-3">
                     <div class="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                        Webhook connected
+                        {{ t('integrations.webhook_connected') }}
                     </div>
                     <div class="flex gap-2">
-                        <button @click="testTeams" class="btn-primary text-sm">Send Test</button>
-                        <button @click="disconnect('teams')" class="btn-danger text-sm">Disconnect</button>
+                        <button @click="testTeams" class="btn-primary text-sm">{{ t('integrations.send_test') }}</button>
+                        <button @click="disconnect('teams')" class="btn-danger text-sm">{{ t('integrations.disconnect') }}</button>
                     </div>
                 </div>
                 <div v-else>
                     <button @click="showTeamsModal = true" class="btn-primary text-sm">
-                        Connect Teams
+                        {{ t('integrations.connect_teams') }}
                     </button>
                 </div>
             </div>
@@ -121,19 +121,19 @@ const testTeams = () => {
         <!-- Teams Webhook Modal -->
         <div v-if="showTeamsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="showTeamsModal = false">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Connect Microsoft Teams</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('integrations.connect_ms_teams') }}</h3>
                 <p class="text-sm text-gray-500 mb-4">
-                    Paste your Teams Incoming Webhook URL. You can create one in Teams → Channel → Connectors → Incoming Webhook.
+                    {{ t('integrations.teams_webhook_help') }}
                 </p>
                 <form @submit.prevent="connectTeams" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Webhook URL</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('integrations.webhook_url') }}</label>
                         <input v-model="teamsForm.webhook_url" type="url" required class="input-field" placeholder="https://outlook.office.com/webhook/..." />
                         <p v-if="teamsForm.errors.webhook_url" class="mt-1 text-sm text-red-500">{{ teamsForm.errors.webhook_url }}</p>
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
-                        <button type="button" @click="showTeamsModal = false" class="btn-secondary">Cancel</button>
-                        <button type="submit" :disabled="teamsForm.processing" class="btn-primary">Connect</button>
+                        <button type="button" @click="showTeamsModal = false" class="btn-secondary">{{ t('common.cancel') }}</button>
+                        <button type="submit" :disabled="teamsForm.processing" class="btn-primary">{{ t('integrations.connect') }}</button>
                     </div>
                 </form>
             </div>
@@ -142,24 +142,24 @@ const testTeams = () => {
         <!-- Microsoft App Credentials Modal -->
         <div v-if="showMicrosoftAppModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="showMicrosoftAppModal = false">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Microsoft App Credentials</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('integrations.ms_app_credentials') }}</h3>
                 <p class="text-sm text-gray-500 mb-4">
-                    Enter your Microsoft Entra ID (Azure AD) application credentials to enable Outlook integration.
+                    {{ t('integrations.ms_app_help') }}
                 </p>
                 <form @submit.prevent="saveMicrosoftAppCredentials" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client ID</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('integrations.client_id') }}</label>
                         <input v-model="microsoftAppForm.client_id" type="text" required class="input-field" placeholder="e.g. 12345678-abcd-1234..." />
                         <p v-if="microsoftAppForm.errors.client_id" class="mt-1 text-sm text-red-500">{{ microsoftAppForm.errors.client_id }}</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client Secret</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('integrations.client_secret') }}</label>
                         <input v-model="microsoftAppForm.client_secret" type="password" required class="input-field" placeholder="Client secret value" />
                         <p v-if="microsoftAppForm.errors.client_secret" class="mt-1 text-sm text-red-500">{{ microsoftAppForm.errors.client_secret }}</p>
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
-                        <button type="button" @click="showMicrosoftAppModal = false" class="btn-secondary">Cancel</button>
-                        <button type="submit" :disabled="microsoftAppForm.processing" class="btn-primary">Save</button>
+                        <button type="button" @click="showMicrosoftAppModal = false" class="btn-secondary">{{ t('common.cancel') }}</button>
+                        <button type="submit" :disabled="microsoftAppForm.processing" class="btn-primary">{{ t('common.save') }}</button>
                     </div>
                 </form>
             </div>

@@ -32,7 +32,7 @@ const submit = () => {
             </div>
 
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Reset Password</h2>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">{{ t('auth.reset_password') }}</h2>
 
                 <form @submit.prevent="submit" class="space-y-5">
                     <div>
@@ -41,7 +41,7 @@ const submit = () => {
                         <p v-if="form.errors.email" class="mt-1 text-sm text-red-500">{{ form.errors.email }}</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">New {{ t('auth.password') }}</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('auth.new_password') }}</label>
                         <input v-model="form.password" type="password" required class="input-field" />
                         <p v-if="form.errors.password" class="mt-1 text-sm text-red-500">{{ form.errors.password }}</p>
                     </div>
@@ -49,7 +49,7 @@ const submit = () => {
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('auth.confirm_password') }}</label>
                         <input v-model="form.password_confirmation" type="password" required class="input-field" />
                     </div>
-                    <button type="submit" :disabled="form.processing" class="btn-primary w-full py-3">Reset Password</button>
+                    <button type="submit" :disabled="form.processing" class="btn-primary w-full py-3">{{ t('auth.reset_password') }}</button>
                 </form>
             </div>
         </div>

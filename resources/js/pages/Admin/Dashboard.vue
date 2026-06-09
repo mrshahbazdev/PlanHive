@@ -16,12 +16,12 @@ const props = defineProps({
 });
 
 const statCards = computed(() => [
-    { label: 'Users', value: props.stats.total_users, icon: 'users', color: 'bg-blue-500' },
-    { label: 'Projects', value: props.stats.total_projects, icon: 'folder', color: 'bg-teal-500' },
-    { label: 'Tasks', value: props.stats.total_tasks, icon: 'tasks', color: 'bg-amber-500' },
-    { label: 'Notes', value: props.stats.total_notes, icon: 'notes', color: 'bg-purple-500' },
-    { label: 'New This Month', value: props.stats.new_users_month, icon: 'new', color: 'bg-green-500' },
-    { label: 'Overdue Tasks', value: props.stats.overdue_tasks, icon: 'overdue', color: 'bg-red-500' },
+    { label: t('admin.users_label'), value: props.stats.total_users, icon: 'users', color: 'bg-blue-500' },
+    { label: t('nav.projects'), value: props.stats.total_projects, icon: 'folder', color: 'bg-teal-500' },
+    { label: t('nav.tasks'), value: props.stats.total_tasks, icon: 'tasks', color: 'bg-amber-500' },
+    { label: t('nav.notes'), value: props.stats.total_notes, icon: 'notes', color: 'bg-purple-500' },
+    { label: t('admin.new_this_month'), value: props.stats.new_users_month, icon: 'new', color: 'bg-green-500' },
+    { label: t('admin.overdue_tasks'), value: props.stats.overdue_tasks, icon: 'overdue', color: 'bg-red-500' },
 ]);
 
 const userGrowthOptions = computed(() => ({
@@ -31,11 +31,11 @@ const userGrowthOptions = computed(() => ({
     stroke: { curve: 'smooth', width: 2 },
     fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } },
     xaxis: { categories: Object.keys(props.userGrowth) },
-    yaxis: { title: { text: 'New Users' } },
+    yaxis: { title: { text: t('admin.recent_users') } },
 }));
 
 const userGrowthSeries = computed(() => [
-    { name: 'Users', data: Object.values(props.userGrowth) },
+    { name: t('admin.users_label'), data: Object.values(props.userGrowth) },
 ]);
 
 const taskStatusOptions = computed(() => ({
@@ -52,10 +52,10 @@ const taskStatusSeries = computed(() => Object.values(props.tasksByStatus));
     <AppLayout>
         <div class="p-6 max-w-7xl mx-auto">
             <div class="flex items-center justify-between mb-8">
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('admin.title') }}</h1>
                 <div class="flex gap-2">
-                    <Link href="/admin/users" class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700">Manage Users</Link>
-                    <Link href="/admin/audit-logs" class="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm hover:bg-gray-700">Audit Logs</Link>
+                    <Link href="/admin/users" class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700">{{ t('admin.manage_users') }}</Link>
+                    <Link href="/admin/audit-logs" class="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm hover:bg-gray-700">{{ t('admin.audit_logs') }}</Link>
                 </div>
             </div>
 
@@ -76,7 +76,7 @@ const taskStatusSeries = computed(() => Object.values(props.tasksByStatus));
             <!-- Charts Row -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Growth (6 Months)</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('admin.user_growth') }}</h3>
                     <VueApexCharts
                         v-if="Object.keys(userGrowth).length"
                         type="area"
@@ -84,10 +84,10 @@ const taskStatusSeries = computed(() => Object.values(props.tasksByStatus));
                         :series="userGrowthSeries"
                         height="300"
                     />
-                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">No data yet</p>
+                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">{{ t('admin.no_data') }}</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tasks by Status</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('admin.tasks_by_status') }}</h3>
                     <VueApexCharts
                         v-if="Object.keys(tasksByStatus).length"
                         type="donut"
@@ -95,7 +95,7 @@ const taskStatusSeries = computed(() => Object.values(props.tasksByStatus));
                         :series="taskStatusSeries"
                         height="300"
                     />
-                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">No tasks yet</p>
+                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">{{ t('admin.no_tasks') }}</p>
                 </div>
             </div>
 
@@ -103,8 +103,8 @@ const taskStatusSeries = computed(() => Object.values(props.tasksByStatus));
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                     <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Users</h3>
-                        <Link href="/admin/users" class="text-sm text-primary-600 hover:underline">View All</Link>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('admin.recent_users') }}</h3>
+                        <Link href="/admin/users" class="text-sm text-primary-600 hover:underline">{{ t('admin.view_all') }}</Link>
                     </div>
                     <div class="divide-y divide-gray-200 dark:divide-gray-700">
                         <div v-for="user in recentUsers" :key="user.id" class="p-4 flex items-center justify-between">
@@ -112,15 +112,15 @@ const taskStatusSeries = computed(() => Object.values(props.tasksByStatus));
                                 <p class="font-medium text-gray-900 dark:text-white">{{ user.name }}</p>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.email }}</p>
                             </div>
-                            <span v-if="user.is_admin" class="px-2 py-1 text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400 rounded-full">Admin</span>
+                            <span v-if="user.is_admin" class="px-2 py-1 text-xs bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400 rounded-full">{{ t('admin.admin') }}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                     <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
-                        <Link href="/admin/audit-logs" class="text-sm text-primary-600 hover:underline">View All</Link>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('admin.recent_activity') }}</h3>
+                        <Link href="/admin/audit-logs" class="text-sm text-primary-600 hover:underline">{{ t('admin.view_all') }}</Link>
                     </div>
                     <div class="divide-y divide-gray-200 dark:divide-gray-700">
                         <div v-for="log in recentLogs" :key="log.id" class="p-4">

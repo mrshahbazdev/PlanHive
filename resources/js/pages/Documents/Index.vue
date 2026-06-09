@@ -112,10 +112,10 @@ const fileIcon = (mime) => {
                     {{ folder }}
                 </button>
                 <button v-if="!showFolderInput" @click="showFolderInput = true" class="px-2 py-1.5 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600">
-                    + Folder
+                    + {{ t('documents.folder_name') }}
                 </button>
                 <div v-else class="flex items-center gap-1">
-                    <input v-model="newFolderName" type="text" class="input-field text-xs py-1 px-2 w-32" placeholder="Folder name" @keyup.enter="createFolder" />
+                    <input v-model="newFolderName" type="text" class="input-field text-xs py-1 px-2 w-32" :placeholder="t('documents.folder_name')" @keyup.enter="createFolder" />
                     <button @click="createFolder" class="btn-primary text-xs px-2 py-1">OK</button>
                     <button @click="showFolderInput = false" class="text-gray-400 hover:text-gray-600 text-xs px-1">X</button>
                 </div>
@@ -134,8 +134,8 @@ const fileIcon = (mime) => {
             <input ref="fileInput" type="file" class="hidden" @change="handleFileSelect" />
             <svg class="w-12 h-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
             <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('documents.drag_drop') }}</p>
-            <p v-if="activeFolder || uploadFolder" class="text-xs text-primary-500 mt-1">Uploading to: {{ uploadFolder || activeFolder }}</p>
-            <p class="text-xs text-gray-400 mt-1">Max 50MB</p>
+            <p v-if="activeFolder || uploadFolder" class="text-xs text-primary-500 mt-1">{{ t('documents.uploading_to') }}: {{ uploadFolder || activeFolder }}</p>
+            <p class="text-xs text-gray-400 mt-1">{{ t('documents.max_size_short') }}</p>
         </div>
 
         <!-- Document List -->

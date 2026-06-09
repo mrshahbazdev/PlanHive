@@ -19,7 +19,7 @@ const openPortal = () => {
 };
 
 const cancelSubscription = () => {
-    if (confirm('Are you sure you want to cancel your subscription?')) {
+    if (confirm(t('billing.cancel_confirm'))) {
         router.post('/billing/cancel');
     }
 };
@@ -34,7 +34,7 @@ const resumeSubscription = () => {
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('billing.title') }}</h1>
             <button v-if="subscription && stripeConfigured" @click="openPortal" class="btn-secondary text-sm">
-                Manage Billing
+                {{ t('billing.manage') }}
             </button>
         </div>
 
@@ -42,16 +42,16 @@ const resumeSubscription = () => {
         <div v-if="subscription" class="card p-4 mb-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-900 dark:text-white">Current Plan: <span class="text-primary-600 capitalize">{{ currentPlan }}</span></p>
-                    <p class="text-xs text-gray-500">Status: {{ subscription.stripe_status }}</p>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ t('billing.current_plan') }}: <span class="text-primary-600 capitalize">{{ currentPlan }}</span></p>
+                    <p class="text-xs text-gray-500">{{ t('billing.status') }}: {{ subscription.stripe_status }}</p>
                 </div>
                 <div class="flex gap-2">
-                    <button v-if="subscription.on_grace_period" @click="resumeSubscription" class="btn-primary text-sm">Resume</button>
-                    <button v-else-if="currentPlan !== 'free'" @click="cancelSubscription" class="btn-danger text-sm">Cancel</button>
+                    <button v-if="subscription.on_grace_period" @click="resumeSubscription" class="btn-primary text-sm">{{ t('billing.resume') }}</button>
+                    <button v-else-if="currentPlan !== 'free'" @click="cancelSubscription" class="btn-danger text-sm">{{ t('billing.cancel') }}</button>
                 </div>
             </div>
             <p v-if="subscription.ends_at" class="text-xs text-amber-600 mt-2">
-                Access until {{ new Date(subscription.ends_at).toLocaleDateString() }}
+                {{ t('billing.access_until') }} {{ new Date(subscription.ends_at).toLocaleDateString() }}
             </p>
         </div>
 
@@ -60,7 +60,7 @@ const resumeSubscription = () => {
             <div v-for="plan in plans" :key="plan.id"
                  :class="['card p-6 relative', plan.popular ? 'ring-2 ring-primary-500' : '']">
                 <div v-if="plan.popular" class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary-500 text-white text-xs font-bold rounded-full">
-                    Most Popular
+                    {{ t('billing.most_popular') }}
                 </div>
 
                 <div class="text-center mb-6">
@@ -82,22 +82,22 @@ const resumeSubscription = () => {
                     <button v-if="plan.id === currentPlan"
                             disabled
                             class="w-full py-2.5 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 cursor-not-allowed">
-                        Current Plan
+                        {{ t('billing.current') }}
                     </button>
                     <button v-else-if="plan.id === 'free'"
                             disabled
                             class="w-full py-2.5 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-500 cursor-not-allowed">
-                        Free
+                        {{ t('billing.free') }}
                     </button>
                     <button v-else-if="!stripeConfigured"
                             disabled
                             class="w-full py-2.5 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-700 text-amber-600 cursor-not-allowed">
-                        Stripe not configured
+                        {{ t('billing.stripe_not_configured') }}
                     </button>
                     <button v-else
                             @click="subscribe(plan.id)"
                             :class="[plan.popular ? 'btn-primary' : 'btn-secondary', 'w-full py-2.5']">
-                        Upgrade to {{ plan.name }}
+                        {{ t('billing.upgrade_to') }} {{ plan.name }}
                     </button>
                 </div>
             </div>

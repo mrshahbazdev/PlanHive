@@ -36,7 +36,12 @@
         "sign_up": "Sign up",
         "sign_in": "Sign in",
         "language": "Language",
-        "logout": "Log Out"
+        "logout": "Log Out",
+        "reset_password": "Reset Password",
+        "send_reset_link": "Send Reset Link",
+        "reset_email_hint": "Enter your email and we'll send you a reset link.",
+        "new_password": "New Password",
+        "back_to": "Back to"
     },
     "dashboard": {
         "welcome": "Welcome back",
@@ -48,7 +53,12 @@
         "overdue": "Overdue",
         "no_events": "No events for today",
         "no_deadlines": "No upcoming deadlines",
-        "recent_activity": "Recent Activity"
+        "recent_activity": "Recent Activity",
+        "goals_progress": "Goals Progress",
+        "just_now": "Just now",
+        "m_ago": "{n}m ago",
+        "h_ago": "{n}h ago",
+        "d_ago": "{n}d ago"
     },
     "projects": {
         "title": "Projects",
@@ -67,7 +77,18 @@
         "created": "Project created successfully",
         "updated": "Project updated successfully",
         "deleted": "Project deleted successfully",
-        "no_projects": "No projects yet. Create your first project!"
+        "no_projects": "No projects yet. Create your first project!",
+        "no_members": "No members yet. Invite someone to collaborate!",
+        "no_description": "No description",
+        "add_member": "Add Member",
+        "search": "Search projects...",
+        "progress": "Progress",
+        "remove_member_confirm": "Remove this member?",
+        "role": "Role",
+        "role_boss": "Boss",
+        "role_manager": "Manager",
+        "role_member": "Member",
+        "role_viewer": "Viewer"
     },
     "tasks": {
         "title": "Tasks",
@@ -93,7 +114,12 @@
         "deleted": "Task deleted successfully",
         "status_updated": "Task status updated",
         "no_tasks": "No tasks yet",
-        "progress": "Progress"
+        "progress": "Progress",
+        "no_description": "No description",
+        "subtasks": "Subtasks",
+        "selected": "selected",
+        "change_status": "Change status...",
+        "select_all": "Select all"
     },
     "goals": {
         "title": "Goals",
@@ -119,17 +145,22 @@
         "created": "Note created successfully",
         "updated": "Note updated successfully",
         "deleted": "Note deleted successfully",
-        "no_notes": "No notes yet"
+        "no_notes": "No notes yet",
+        "no_content": "No content",
+        "updated_at": "Updated"
     },
     "documents": {
         "title": "Documents",
         "upload": "Upload Document",
         "drag_drop": "Drag & drop files here, or click to select",
         "max_size": "Max file size: 50MB",
+        "max_size_short": "Max 50MB",
         "uploaded": "Document uploaded successfully",
         "deleted": "Document deleted successfully",
         "download": "Download",
-        "no_documents": "No documents yet"
+        "no_documents": "No documents yet",
+        "folder_name": "Folder name",
+        "uploading_to": "Uploading to"
     },
     "contacts": {
         "title": "Contacts",
@@ -148,7 +179,15 @@
         "created": "Contact created successfully",
         "updated": "Contact updated successfully",
         "deleted": "Contact deleted successfully",
-        "no_contacts": "No contacts yet"
+        "no_contacts": "No contacts yet",
+        "add_tag": "Add tag...",
+        "scan_photo_hint": "Take a photo or upload an image of a business card",
+        "scan_help": "Take a photo or upload an image of a business card",
+        "reset": "Reset",
+        "raw_ocr": "Raw OCR Text",
+        "contact_details": "Contact Details",
+        "scanning": "Scanning...",
+        "ocr_failed": "OCR scan failed. Please try a clearer image."
     },
     "calendar": {
         "today": "Today",
@@ -161,6 +200,182 @@
         "end": "End",
         "all_day": "All Day",
         "location": "Location"
+    },
+    "reminders": {
+        "title": "Reminders",
+        "new": "New Reminder",
+        "no_reminders": "No reminders set",
+        "remind_at": "Remind At",
+        "channel": "Channel",
+        "recurrence": "Recurrence",
+        "link_to": "Link to",
+        "select_task": "Select Task",
+        "select_goal": "Select Goal",
+        "linked_item": "Linked item",
+        "one_time": "One-time",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "nothing": "Nothing",
+        "select": "-- Select --",
+        "in_app": "In-App",
+        "task": "Task",
+        "goal": "Goal",
+        "push": "Push",
+        "teams": "Teams"
+    },
+    "profile": {
+        "profile_info": "Profile Information",
+        "change_avatar": "Change Avatar",
+        "timezone": "Timezone",
+        "change_password": "Change Password",
+        "current_password": "Current Password",
+        "new_password": "New Password",
+        "update_password": "Update Password"
+    },
+    "notifications": {
+        "title": "Notifications",
+        "no_notifications": "No notifications yet",
+        "mark_all_read": "Mark all as read",
+        "mark_read": "Mark read",
+        "just_now": "Just now",
+        "m_ago": "{n}m ago",
+        "h_ago": "{n}h ago",
+        "d_ago": "{n}d ago"
+    },
+    "integrations": {
+        "title": "Integrations",
+        "outlook_desc": "Sync your calendar events with Microsoft Outlook",
+        "teams_desc": "Receive task and reminder notifications in Microsoft Teams",
+        "config_required": "Microsoft app credentials not configured. Please configure your Client ID and Secret to connect Outlook.",
+        "microsoft_outlook": "Microsoft Outlook",
+        "microsoft_teams": "Microsoft Teams",
+        "connected": "Connected",
+        "webhook_connected": "Webhook connected",
+        "sync_calendar": "Sync Calendar",
+        "disconnect": "Disconnect",
+        "disconnect_confirm": "Disconnect {provider}?",
+        "send_test": "Send Test",
+        "connect_outlook": "Connect Outlook",
+        "configure_ms_app": "Configure Microsoft App",
+        "connect_teams": "Connect Teams",
+        "connect_ms_teams": "Connect Microsoft Teams",
+        "teams_webhook_help": "Paste your Teams Incoming Webhook URL. You can create one in Teams → Channel → Connectors → Incoming Webhook.",
+        "webhook_url": "Webhook URL",
+        "ms_app_credentials": "Microsoft App Credentials",
+        "ms_app_help": "Enter your Microsoft Entra ID (Azure AD) application credentials to enable Outlook integration.",
+        "client_id": "Client ID",
+        "client_secret": "Client Secret",
+        "connect": "Connect"
+    },
+    "billing": {
+        "title": "Billing & Plans",
+        "manage": "Manage Billing",
+        "current_plan": "Current Plan",
+        "status": "Status",
+        "resume": "Resume",
+        "cancel": "Cancel",
+        "cancel_confirm": "Are you sure you want to cancel your subscription?",
+        "access_until": "Access until",
+        "most_popular": "Most Popular",
+        "current": "Current Plan",
+        "free": "Free",
+        "stripe_not_configured": "Stripe not configured",
+        "upgrade_to": "Upgrade to"
+    },
+    "reports": {
+        "title": "Reports & Analytics",
+        "projects": "Projects",
+        "total_tasks": "Total Tasks",
+        "completed": "Completed",
+        "overdue": "Overdue",
+        "goals": "Goals",
+        "productivity": "Productivity",
+        "task_completion": "Task Completion (6 Months)",
+        "tasks_by_status": "Tasks by Status",
+        "tasks_by_priority": "Tasks by Priority",
+        "project_progress": "Project Progress",
+        "upcoming_deadlines": "Upcoming Deadlines (14 Days)",
+        "no_data": "No data yet",
+        "no_projects": "No projects yet",
+        "no_deadlines": "No upcoming deadlines"
+    },
+    "admin": {
+        "title": "Admin Dashboard",
+        "users": "User Management",
+        "audit_logs": "Audit Logs",
+        "back_to_admin": "Back to Admin",
+        "back_to_users": "← Back to Users",
+        "search_users": "Search users...",
+        "search_logs": "Search logs...",
+        "all": "All",
+        "admins": "Admins",
+        "users_label": "Users",
+        "user": "User",
+        "role": "Role",
+        "admin_role": "Admin",
+        "admin": "Admin",
+        "user_role": "User",
+        "users_filter": "Users",
+        "joined": "Joined",
+        "remove_admin": "Remove Admin",
+        "make_admin": "Make Admin",
+        "profile": "Profile",
+        "name": "Name",
+        "email": "Email",
+        "recent_activity": "Recent Activity",
+        "no_activity": "No activity recorded",
+        "no_logs": "No audit logs found",
+        "all_actions": "All Actions",
+        "action": "Action",
+        "target": "Target",
+        "ip": "IP",
+        "date": "Date",
+        "save_changes": "Save Changes",
+        "view_all": "View All",
+        "recent_users": "Recent Users",
+        "user_growth": "User Growth (6 Months)",
+        "tasks_by_status": "Tasks by Status",
+        "no_data": "No data yet",
+        "no_tasks": "No tasks yet",
+        "manage_users": "Manage Users",
+        "new_this_month": "New This Month",
+        "overdue_tasks": "Overdue Tasks",
+        "toggle_admin_confirm": "Toggle admin for {name}?",
+        "delete_confirm": "Delete {name}? This cannot be undone.",
+        "delete_user_confirm": "Delete {name}? This cannot be undone.",
+        "user_management": "User Management",
+        "actions": "Actions",
+        "user_detail": "User"
+    },
+    "api": {
+        "title": "API & Tokens",
+        "description": "Manage API tokens and view endpoint documentation.",
+        "token_created": "Token created! Copy it now — it won't be shown again.",
+        "api_tokens": "API Tokens",
+        "create_token": "Create Token",
+        "token_name": "Token Name",
+        "permissions": "Permissions",
+        "revoke": "Revoke",
+        "revoke_confirm": "Revoke this token? This action cannot be undone.",
+        "no_tokens": "No API tokens created yet",
+        "endpoints": "API Endpoints",
+        "created": "Created",
+        "last_used": "Last used",
+        "read_projects": "Read Projects",
+        "write_projects": "Write Projects",
+        "read_tasks": "Read Tasks",
+        "write_tasks": "Write Tasks",
+        "read_contacts": "Read Contacts",
+        "write_contacts": "Write Contacts"
+    },
+    "welcome": {
+        "badge": "Multi-Project Management SaaS",
+        "subtitle": "Manage multiple projects, track tasks, set reminders, take notes, upload documents, and sync with Outlook & Teams — all from one beautiful calendar-first dashboard.",
+        "feature_calendar": "Color-coded calendar as your homepage. See all projects, tasks, and meetings at a glance.",
+        "feature_tasks": "Kanban boards, priorities, subtasks, and goal tracking across all your projects.",
+        "feature_contacts": "Manage contacts, scan business cards with OCR, and integrate with Outlook & Teams.",
+        "footer": "Built with Laravel & Vue."
     },
     "common": {
         "save": "Save",
@@ -176,32 +391,17 @@
         "loading": "Loading...",
         "free": "Free",
         "all": "All",
-        "export_csv": "Export CSV"
-    },
-    "integrations": {
-        "title": "Integrations",
-        "outlook_desc": "Sync your calendar events with Microsoft Outlook",
-        "teams_desc": "Receive task and reminder notifications in Microsoft Teams",
-        "config_required": "Microsoft app credentials not configured. Please configure your Client ID and Secret to connect Outlook."
-    },
-    "billing": {
-        "title": "Billing & Plans"
+        "export_csv": "Export CSV",
+        "reset": "Reset",
+        "select": "-- Select --",
+        "email": "Email",
+        "title": "Title",
+        "back": "Back",
+        "no_description": "No description"
     },
     "search": {
         "title": "Search",
         "placeholder": "Search projects, tasks, notes, contacts...",
         "start": "Type at least 2 characters to search across all your data"
-    },
-
-    "reports": {
-        "title": "Reports & Analytics"
-    },
-    "api": {
-        "title": "API & Tokens"
-    },
-    "admin": {
-        "title": "Admin Dashboard",
-        "users": "User Management",
-        "audit_logs": "Audit Logs"
     }
 }

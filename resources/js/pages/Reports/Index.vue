@@ -23,9 +23,9 @@ const completionOptions = computed(() => ({
     stroke: { curve: 'smooth', width: 2 },
     fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.05 } },
     xaxis: { categories: Object.keys(props.tasksByMonth) },
-    yaxis: { title: { text: 'Completed' } },
+    yaxis: { title: { text: t('reports.completed') } },
 }));
-const completionSeries = computed(() => [{ name: 'Completed', data: Object.values(props.tasksByMonth) }]);
+const completionSeries = computed(() => [{ name: t('reports.completed'), data: Object.values(props.tasksByMonth) }]);
 
 const priorityOptions = computed(() => ({
     chart: { type: 'bar', height: 280, toolbar: { show: false } },
@@ -33,7 +33,7 @@ const priorityOptions = computed(() => ({
     plotOptions: { bar: { borderRadius: 6, horizontal: true } },
     xaxis: { categories: Object.keys(props.tasksByPriority) },
 }));
-const prioritySeries = computed(() => [{ name: 'Tasks', data: Object.values(props.tasksByPriority) }]);
+const prioritySeries = computed(() => [{ name: t('nav.tasks'), data: Object.values(props.tasksByPriority) }]);
 
 const statusOptions = computed(() => ({
     chart: { type: 'donut', height: 280 },
@@ -60,60 +60,60 @@ const priorityColor = (p) => {
 <template>
     <AppLayout>
         <div class="p-6 max-w-7xl mx-auto">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">Reports & Analytics</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">{{ t('reports.title') }}</h1>
 
             <!-- Summary Cards -->
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
                     <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ summary.total_projects }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Projects</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('reports.projects') }}</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
                     <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ summary.total_tasks }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Total Tasks</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('reports.total_tasks') }}</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
                     <p class="text-2xl font-bold text-green-600">{{ summary.completed_tasks }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Completed</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('reports.completed') }}</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
                     <p class="text-2xl font-bold text-red-600">{{ summary.overdue_tasks }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Overdue</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('reports.overdue') }}</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
                     <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ summary.total_goals }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Goals</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('reports.goals') }}</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
                     <p :class="['text-2xl font-bold', scoreColor]">{{ productivityScore }}%</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Productivity</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ t('reports.productivity') }}</p>
                 </div>
             </div>
 
             <!-- Charts -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Task Completion (6 Months)</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('reports.task_completion') }}</h3>
                     <VueApexCharts v-if="Object.keys(tasksByMonth).length" type="area" :options="completionOptions" :series="completionSeries" height="280" />
-                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">No data yet</p>
+                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">{{ t('reports.no_data') }}</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tasks by Status</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('reports.tasks_by_status') }}</h3>
                     <VueApexCharts v-if="Object.keys(tasksByStatus).length" type="donut" :options="statusOptions" :series="statusSeries" height="280" />
-                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">No data yet</p>
+                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">{{ t('reports.no_data') }}</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tasks by Priority</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('reports.tasks_by_priority') }}</h3>
                     <VueApexCharts v-if="Object.keys(tasksByPriority).length" type="bar" :options="priorityOptions" :series="prioritySeries" height="280" />
-                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">No data yet</p>
+                    <p v-else class="text-gray-500 dark:text-gray-400 text-center py-12">{{ t('reports.no_data') }}</p>
                 </div>
 
                 <!-- Project Progress -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Project Progress</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('reports.project_progress') }}</h3>
                     <div class="space-y-4 max-h-[280px] overflow-y-auto">
                         <div v-for="project in projects" :key="project.id">
                             <div class="flex items-center justify-between mb-1">
@@ -133,7 +133,7 @@ const priorityColor = (p) => {
                                 ></div>
                             </div>
                         </div>
-                        <p v-if="!projects.length" class="text-gray-500 dark:text-gray-400 text-center py-6">No projects yet</p>
+                        <p v-if="!projects.length" class="text-gray-500 dark:text-gray-400 text-center py-6">{{ t('reports.no_projects') }}</p>
                     </div>
                 </div>
             </div>
@@ -141,7 +141,7 @@ const priorityColor = (p) => {
             <!-- Upcoming Deadlines -->
             <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                 <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Upcoming Deadlines (14 Days)</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('reports.upcoming_deadlines') }}</h3>
                 </div>
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">
                     <div v-for="task in upcomingDeadlines" :key="task.id" class="p-4 flex items-center justify-between">
@@ -157,7 +157,7 @@ const priorityColor = (p) => {
                             <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(task.due_date) }}</span>
                         </div>
                     </div>
-                    <div v-if="!upcomingDeadlines.length" class="p-8 text-center text-gray-500 dark:text-gray-400">No upcoming deadlines</div>
+                    <div v-if="!upcomingDeadlines.length" class="p-8 text-center text-gray-500 dark:text-gray-400">{{ t('reports.no_deadlines') }}</div>
                 </div>
             </div>
         </div>
