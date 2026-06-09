@@ -166,7 +166,7 @@ class DashboardController extends Controller
                 'time' => $g->updated_at->toIso8601String(),
             ]);
 
-        return $recentTasks->merge($recentGoals)
+        return $recentTasks->concat($recentGoals)
             ->sortByDesc('time')
             ->take(8)
             ->values()
