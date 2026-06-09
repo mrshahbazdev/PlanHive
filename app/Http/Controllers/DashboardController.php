@@ -107,7 +107,7 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'projects' => $allProjects,
             'upcomingTasks' => $upcomingTasks,
-            'calendarEvents' => $calendarEvents->merge($taskEvents)->merge($goalEvents)->values(),
+            'calendarEvents' => $calendarEvents->concat($taskEvents)->concat($goalEvents)->values(),
             'goalsProgress' => $goalsProgress,
             'stats' => [
                 'total_projects' => $allProjects->count(),
