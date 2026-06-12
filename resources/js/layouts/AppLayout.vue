@@ -49,10 +49,10 @@ const logout = () => {
 
 <template>
     <div class="min-h-screen flex bg-gray-50 dark:bg-gray-900">
-        <!-- Sidebar (hidden on mobile) -->
+        <!-- Sidebar (hidden on mobile via sidebar-desktop class) -->
         <aside
             :class="[
-                'fixed inset-y-0 left-0 z-30 flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 hidden md:flex',
+                'sidebar-desktop fixed inset-y-0 left-0 z-30 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300',
                 sidebarStore.collapsed ? 'w-16' : 'w-64'
             ]"
         >
@@ -130,7 +130,7 @@ const logout = () => {
         </aside>
 
         <!-- Main Content -->
-        <div :class="['flex-1 transition-all duration-300 pb-16 md:pb-0', sidebarStore.collapsed ? 'md:ml-16' : 'md:ml-64']">
+        <div :class="['flex-1 transition-all duration-300 ml-0 pb-16 md:pb-0', sidebarStore.collapsed ? 'md:ml-16' : 'md:ml-64']">
             <!-- Top Header -->
             <header class="sticky top-0 z-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16">
                 <div class="flex items-center justify-between h-full px-4 sm:px-6">
