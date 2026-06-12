@@ -199,7 +199,9 @@
         "start": "Beginn",
         "end": "Ende",
         "all_day": "Ganztägig",
-        "location": "Ort"
+        "location": "Ort",
+        "also_create_task": "Auch als Aufgabe erstellen",
+        "view_task": "Aufgabe anzeigen"
     },
     "reminders": {
         "title": "Erinnerungen",

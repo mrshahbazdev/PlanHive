@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { router } from '@inertiajs/vue3';
 import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -27,26 +28,51 @@ const timeAgo = (date) => {
 };
 
 const showEventModal = ref(false);
-const newEvent = ref({ title: '', start_at: '', end_at: '', project_id: null, all_day: false });
+const newEvent = ref({ title: '', start_at: '', end_at: '', project_id: null, all_day: false, create_as_task: true });
+
+const isMobile = ref(window.innerWidth < 768);
 
 const calendarOptions = computed(() => ({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
-    initialView: 'dayGridMonth',
-    headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay',
-    },
+    initialView: isMobile.value ? 'timeGridWeek' : 'dayGridMonth',
+    headerToolbar: isMobile.value
+        ? { left: 'prev,next', center: 'title', right: 'timeGridWeek,timeGridDay' }
+        : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
     events: props.calendarEvents,
     editable: true,
     selectable: true,
-    dayMaxEvents: 3,
+    dayMaxEvents: isMobile.value ? 2 : 3,
     height: 'auto',
+    displayEventTime: true,
+    eventTimeFormat: {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    },
     dateClick(info) {
-        newEvent.value.start_at = info.dateStr;
-        newEvent.value.end_at = info.dateStr;
-        newEvent.value.all_day = true;
+        const clickedDate = info.dateStr;
+        if (clickedDate.length <= 10) {
+            newEvent.value.start_at = clickedDate + 'T09:00';
+            newEvent.value.end_at = clickedDate + 'T10:00';
+        } else {
+            newEvent.value.start_at = clickedDate.substring(0, 16);
+            newEvent.value.end_at = clickedDate.substring(0, 16);
+        }
+        newEvent.value.all_day = false;
+        newEvent.value.create_as_task = true;
         showEventModal.value = true;
+    },
+    eventClick(info) {
+        const eventId = String(info.event.id);
+        const ep = info.event.extendedProps;
+        if (eventId.startsWith('task-')) {
+            const taskId = eventId.replace('task-', '');
+            router.get('/tasks', { highlight: taskId });
+        } else if (ep.task_id) {
+            router.get('/tasks', { highlight: ep.task_id });
+        } else if (eventId.startsWith('goal-')) {
+            router.get('/goals');
+        }
     },
     eventDrop(info) {
         const eventId = info.event.id;
@@ -81,7 +107,7 @@ const createEvent = async () => {
         end_at: newEvent.value.end_at || newEvent.value.start_at,
     });
     showEventModal.value = false;
-    newEvent.value = { title: '', start_at: '', end_at: '', project_id: null, all_day: false };
+    newEvent.value = { title: '', start_at: '', end_at: '', project_id: null, all_day: false, create_as_task: true };
     window.location.reload();
 };
 
@@ -101,12 +127,12 @@ const getPriorityColor = (priority) => {
 <template>
     <div>
         <!-- Page Header -->
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('dashboard.welcome') }}, {{ $page.props.auth.user?.name?.split(' ')[0] }}</h1>
+        <div class="mb-4 sm:mb-6">
+            <h1 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">{{ t('dashboard.welcome') }}, {{ $page.props.auth.user?.name?.split(' ')[0] }}</h1>
         </div>
 
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <!-- Stats Grid (hidden on mobile to prioritize calendar) -->
+        <div class="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div v-for="stat in statCards" :key="stat.label" class="card p-5">
                 <div class="flex items-center justify-between">
                     <div>
@@ -126,12 +152,12 @@ const getPriorityColor = (priority) => {
         <!-- Calendar + Sidebar -->
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
             <!-- Calendar -->
-            <div class="xl:col-span-3 card p-6">
+            <div class="xl:col-span-3 card p-3 sm:p-6">
                 <FullCalendar :options="calendarOptions" />
             </div>
 
-            <!-- Right Sidebar -->
-            <div class="space-y-6">
+            <!-- Right Sidebar (hidden on mobile to focus on calendar) -->
+            <div class="hidden lg:block space-y-6">
                 <!-- Today's Agenda -->
                 <div class="card p-5">
                     <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-4">{{ t('dashboard.today_agenda') }}</h3>
@@ -218,21 +244,29 @@ const getPriorityColor = (priority) => {
 
         <!-- New Event Modal -->
         <div v-if="showEventModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="showEventModal = false">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6 mx-4">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">{{ t('calendar.new_event') }}</h3>
                 <form @submit.prevent="createEvent" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('calendar.event_title') }}</label>
                         <input v-model="newEvent.title" type="text" required class="input-field" />
                     </div>
+                    <div class="flex items-center gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input v-model="newEvent.all_day" type="checkbox" class="w-4 h-4 text-primary-500 rounded border-gray-300 focus:ring-primary-500" />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ t('calendar.all_day') }}</span>
+                        </label>
+                    </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('calendar.start') }}</label>
-                            <input v-model="newEvent.start_at" type="datetime-local" class="input-field" />
+                            <input v-if="!newEvent.all_day" v-model="newEvent.start_at" type="datetime-local" class="input-field" />
+                            <input v-else v-model="newEvent.start_at" type="date" class="input-field" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('calendar.end') }}</label>
-                            <input v-model="newEvent.end_at" type="datetime-local" class="input-field" />
+                            <input v-if="!newEvent.all_day" v-model="newEvent.end_at" type="datetime-local" class="input-field" />
+                            <input v-else v-model="newEvent.end_at" type="date" class="input-field" />
                         </div>
                     </div>
                     <div>
@@ -241,6 +275,12 @@ const getPriorityColor = (priority) => {
                             <option :value="null">-- None --</option>
                             <option v-for="p in projects" :key="p.id" :value="p.id">{{ p.name }}</option>
                         </select>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input v-model="newEvent.create_as_task" type="checkbox" class="w-4 h-4 text-primary-500 rounded border-gray-300 focus:ring-primary-500" />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ t('calendar.also_create_task') }}</span>
+                        </label>
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" @click="showEventModal = false" class="btn-secondary">{{ t('common.cancel') }}</button>

@@ -49,10 +49,10 @@ const logout = () => {
 
 <template>
     <div class="min-h-screen flex bg-gray-50 dark:bg-gray-900">
-        <!-- Sidebar -->
+        <!-- Sidebar (hidden on mobile) -->
         <aside
             :class="[
-                'fixed inset-y-0 left-0 z-30 flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300',
+                'fixed inset-y-0 left-0 z-30 flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 hidden md:flex',
                 sidebarStore.collapsed ? 'w-16' : 'w-64'
             ]"
         >
@@ -130,12 +130,21 @@ const logout = () => {
         </aside>
 
         <!-- Main Content -->
-        <div :class="['flex-1 transition-all duration-300', sidebarStore.collapsed ? 'ml-16' : 'ml-64']">
+        <div :class="['flex-1 transition-all duration-300 pb-16 md:pb-0', sidebarStore.collapsed ? 'md:ml-16' : 'md:ml-64']">
             <!-- Top Header -->
             <header class="sticky top-0 z-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16">
-                <div class="flex items-center justify-between h-full px-6">
-                    <!-- Search -->
-                    <div class="flex-1 max-w-lg">
+                <div class="flex items-center justify-between h-full px-4 sm:px-6">
+                    <!-- Mobile Logo -->
+                    <div class="flex items-center gap-2 md:hidden">
+                        <div class="w-7 h-7 bg-gradient-to-br from-primary-500 to-amber-500 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2L3 7v6l7 5 7-5V7l-7-5zM10 4.236L14.764 7.5 10 10.764 5.236 7.5 10 4.236z"/>
+                            </svg>
+                        </div>
+                        <span class="text-base font-bold text-gray-900 dark:text-white">PlanHive</span>
+                    </div>
+                    <!-- Search (hidden on very small screens) -->
+                    <div class="flex-1 max-w-lg hidden sm:block">
                         <div class="relative">
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             <input
@@ -215,6 +224,30 @@ const logout = () => {
                 <slot />
             </main>
         </div>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex md:hidden">
+            <Link href="/dashboard" :class="['flex-1 flex flex-col items-center py-2 text-xs font-medium transition-colors', isActive('/dashboard') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400']">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span>{{ t('nav.calendar') }}</span>
+            </Link>
+            <Link href="/tasks" :class="['flex-1 flex flex-col items-center py-2 text-xs font-medium transition-colors', isActive('/tasks') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400']">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                <span>{{ t('nav.tasks') }}</span>
+            </Link>
+            <Link href="/projects" :class="['flex-1 flex flex-col items-center py-2 text-xs font-medium transition-colors', isActive('/projects') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400']">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span>{{ t('nav.projects') }}</span>
+            </Link>
+            <Link href="/goals" :class="['flex-1 flex flex-col items-center py-2 text-xs font-medium transition-colors', isActive('/goals') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400']">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><circle cx="12" cy="12" r="6" stroke-width="2"/><circle cx="12" cy="12" r="2" stroke-width="2"/></svg>
+                <span>{{ t('nav.goals') }}</span>
+            </Link>
+            <Link href="/notes" :class="['flex-1 flex flex-col items-center py-2 text-xs font-medium transition-colors', isActive('/notes') ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400']">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>{{ t('nav.notes') }}</span>
+            </Link>
+        </nav>
 
         <!-- Toast Notifications -->
         <ToastNotifications />

@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
+import { ref, computed, onMounted } from 'vue';
+import { router, useForm, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -13,6 +13,20 @@ const showTaskDetail = ref(false);
 const detailTask = ref(null);
 const selectedTasks = ref([]);
 const showBulkBar = computed(() => selectedTasks.value.length > 0);
+const highlightedTaskId = ref(null);
+
+onMounted(() => {
+    const params = new URLSearchParams(window.location.search);
+    const highlightId = params.get('highlight');
+    if (highlightId) {
+        highlightedTaskId.value = Number(highlightId);
+        const task = props.tasks.find(t => t.id === Number(highlightId));
+        if (task) {
+            detailTask.value = task;
+            showTaskDetail.value = true;
+        }
+    }
+});
 
 const createForm = useForm({
     title: '', description: '', priority: 'medium', status: 'todo', due_date: '', assigned_to: null,
@@ -187,7 +201,7 @@ const statusColors = {
                 <span>{{ t('tasks.select_all') }}</span>
             </div>
             <div v-for="task in filteredTasks" :key="task.id"
-                 class="card p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
+                 :class="['card p-4 flex items-center gap-4 hover:shadow-md transition-shadow', highlightedTaskId === task.id ? 'ring-2 ring-primary-500 bg-primary-50 dark:bg-primary-900/20' : '']">
                 <input type="checkbox" :checked="selectedTasks.includes(task.id)" @change="toggleSelect(task.id)"
                        class="w-4 h-4 text-primary-500 rounded border-gray-300 focus:ring-primary-500 flex-shrink-0" />
                 <div :class="[statusColors[task.status], 'w-3 h-3 rounded-full flex-shrink-0']"></div>
