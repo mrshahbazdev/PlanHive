@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CalendarEvent;
+use App\Models\Task;
 use Illuminate\Http\Request;
 
 class CalendarEventController extends Controller
@@ -27,6 +28,7 @@ class CalendarEventController extends Controller
                     'project_name' => $event->project?->name,
                     'description' => $event->description,
                     'location' => $event->location,
+                    'task_id' => $event->task_id,
                 ],
             ]);
 
@@ -44,10 +46,29 @@ class CalendarEventController extends Controller
             'project_id' => ['nullable', 'exists:projects,id'],
             'location' => ['nullable', 'string', 'max:255'],
             'color_override' => ['nullable', 'string', 'max:7'],
+            'create_as_task' => ['sometimes', 'boolean'],
         ]);
+
+        $createAsTask = $validated['create_as_task'] ?? false;
+        unset($validated['create_as_task']);
 
         $validated['user_id'] = $request->user()->id;
         $event = CalendarEvent::create($validated);
+
+        if ($createAsTask && $validated['project_id']) {
+            $task = Task::create([
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+                'project_id' => $validated['project_id'],
+                'created_by' => $request->user()->id,
+                'assigned_to' => $request->user()->id,
+                'due_date' => $validated['start_at'],
+                'status' => 'todo',
+                'priority' => 'medium',
+            ]);
+
+            $event->update(['task_id' => $task->id]);
+        }
 
         return response()->json($event, 201);
     }

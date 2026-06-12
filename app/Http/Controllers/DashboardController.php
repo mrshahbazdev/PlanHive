@@ -47,6 +47,7 @@ class DashboardController extends Controller
                     'project_name' => $event->project?->name,
                     'description' => $event->description,
                     'location' => $event->location,
+                    'task_id' => $event->task_id,
                 ],
             ]);
 

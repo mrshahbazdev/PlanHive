@@ -199,7 +199,9 @@
         "start": "Start",
         "end": "End",
         "all_day": "All Day",
-        "location": "Location"
+        "location": "Location",
+        "also_create_task": "Also create as task",
+        "view_task": "View Task"
     },
     "reminders": {
         "title": "Reminders",

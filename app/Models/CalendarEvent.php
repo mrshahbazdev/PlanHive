@@ -15,6 +15,7 @@ class CalendarEvent extends Model
     protected $fillable = [
         'project_id',
         'user_id',
+        'task_id',
         'title',
         'description',
         'start_at',
@@ -40,6 +41,11 @@ class CalendarEvent extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
     }
 
     public function reminders(): MorphMany
