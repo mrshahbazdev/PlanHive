@@ -175,9 +175,9 @@ const statusColors = {
         <div v-if="showBulkBar" class="mb-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl flex items-center gap-3 border border-primary-200 dark:border-primary-800">
             <span class="text-sm font-medium text-primary-700 dark:text-primary-400">{{ selectedTasks.length }} {{ t('tasks.selected') }}</span>
             <div class="flex gap-2 ml-auto">
-                <select @change="bulkUpdateStatus($event.target.value); $event.target.value = ''" class="text-xs border rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
-                    <option value="" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">{{ t('tasks.change_status') }}</option>
-                    <option v-for="s in ['todo', 'in_progress', 'review', 'done', 'cancelled']" :key="s" :value="s" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">{{ t(`tasks.${s}`) }}</option>
+                <select @change="bulkUpdateStatus($event.target.value); $event.target.value = ''" class="select-field-sm px-2 py-1.5">
+                    <option value="">{{ t('tasks.change_status') }}</option>
+                    <option v-for="s in ['todo', 'in_progress', 'review', 'done', 'cancelled']" :key="s" :value="s">{{ t(`tasks.${s}`) }}</option>
                 </select>
                 <button @click="bulkDelete" class="text-xs px-3 py-1.5 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-lg hover:bg-red-200">
                     {{ t('common.delete') }}
@@ -216,8 +216,8 @@ const statusColors = {
                     </div>
                 </div>
                 <span :class="[priorityColors[task.priority], 'text-xs px-2.5 py-1 rounded-full font-medium']">{{ t(`tasks.${task.priority}`) }}</span>
-                <select @change="updateStatus(task.id, $event.target.value)" :value="task.status" class="text-xs border rounded-lg px-2 py-1 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
-                    <option v-for="s in ['todo', 'in_progress', 'review', 'done', 'cancelled']" :key="s" :value="s" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">{{ t(`tasks.${s}`) }}</option>
+                <select @change="updateStatus(task.id, $event.target.value)" :value="task.status" class="select-field-sm px-2 py-1">
+                    <option v-for="s in ['todo', 'in_progress', 'review', 'done', 'cancelled']" :key="s" :value="s">{{ t(`tasks.${s}`) }}</option>
                 </select>
                 <button @click="openEdit(task)" class="text-gray-400 hover:text-primary-500 p-1" :title="t('common.edit')">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
