@@ -175,7 +175,7 @@ const statusColors = {
         <div v-if="showBulkBar" class="mb-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl flex items-center gap-3 border border-primary-200 dark:border-primary-800">
             <span class="text-sm font-medium text-primary-700 dark:text-primary-400">{{ selectedTasks.length }} {{ t('tasks.selected') }}</span>
             <div class="flex gap-2 ml-auto">
-                <select @change="bulkUpdateStatus($event.target.value); $event.target.value = ''" class="text-xs border rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
+                <select @change="bulkUpdateStatus($event.target.value); $event.target.value = ''" class="text-xs border rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
                     <option value="">{{ t('tasks.change_status') }}</option>
                     <option v-for="s in ['todo', 'in_progress', 'review', 'done', 'cancelled']" :key="s" :value="s">{{ t(`tasks.${s}`) }}</option>
                 </select>
@@ -216,7 +216,7 @@ const statusColors = {
                     </div>
                 </div>
                 <span :class="[priorityColors[task.priority], 'text-xs px-2.5 py-1 rounded-full font-medium']">{{ t(`tasks.${task.priority}`) }}</span>
-                <select @change="updateStatus(task.id, $event.target.value)" :value="task.status" class="text-xs border rounded-lg px-2 py-1 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
+                <select @change="updateStatus(task.id, $event.target.value)" :value="task.status" class="text-xs border rounded-lg px-2 py-1 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
                     <option v-for="s in ['todo', 'in_progress', 'review', 'done', 'cancelled']" :key="s" :value="s">{{ t(`tasks.${s}`) }}</option>
                 </select>
                 <button @click="openEdit(task)" class="text-gray-400 hover:text-primary-500 p-1" :title="t('common.edit')">
