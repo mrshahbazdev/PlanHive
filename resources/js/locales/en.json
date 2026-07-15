@@ -405,5 +405,15 @@
         "title": "Search",
         "placeholder": "Search projects, tasks, notes, contacts...",
         "start": "Type at least 2 characters to search across all your data"
+    },
+    "invitations": {
+        "title": "You're invited to join {project}",
+        "description": "{name} invited you to collaborate on '{project}' as a {role}.",
+        "signed_in_as": "Signed in as {email}.",
+        "accept": "Accept Invitation",
+        "wrong_account": "This invitation was sent to {invitation_email}, but you are signed in as {user_email}.",
+        "sign_out": "Sign out and use the correct account",
+        "create_account": "Create account",
+        "sign_in": "Sign in"
     }
 }

@@ -1,15 +1,19 @@
 <script setup>
-import { useForm, Link } from '@inertiajs/vue3';
+import { useForm, Link, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const page = usePage();
+
+const invitation = page.props.invitation;
 
 const form = useForm({
     name: '',
-    email: '',
+    email: invitation?.email || '',
     password: '',
     password_confirmation: '',
     locale: 'en',
+    invitation_token: invitation?.token || '',
 });
 
 const submit = () => {
@@ -34,9 +38,18 @@ const submit = () => {
 
             <!-- Card -->
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">{{ t('auth.register') }}</h2>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">{{ t('auth.register') }}</h2>
+
+                <p v-if="invitation" class="text-center text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    Join <strong class="text-gray-900 dark:text-white">{{ invitation.project.name }}</strong> as a {{ invitation.role }}.
+                </p>
+                <p v-else class="text-center text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    Create your account to get started.
+                </p>
 
                 <form @submit.prevent="submit" class="space-y-5">
+                    <input type="hidden" v-model="form.invitation_token" />
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('auth.name') }}</label>
                         <input v-model="form.name" type="text" required autofocus class="input-field" />
@@ -45,7 +58,14 @@ const submit = () => {
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('auth.email') }}</label>
-                        <input v-model="form.email" type="email" required class="input-field" />
+                        <input
+                            v-model="form.email"
+                            type="email"
+                            required
+                            class="input-field"
+                            :disabled="!!invitation"
+                            :class="{ 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed': !!invitation }"
+                        />
                         <p v-if="form.errors.email" class="mt-1 text-sm text-red-500">{{ form.errors.email }}</p>
                     </div>
 

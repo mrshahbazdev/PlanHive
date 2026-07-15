@@ -10,9 +10,11 @@ use Inertia\Response;
 
 class LoginController extends Controller
 {
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('Auth/Login');
+        return Inertia::render('Auth/Login', [
+            'redirect' => $request->input('redirect'),
+        ]);
     }
 
     public function store(Request $request)
@@ -24,6 +26,13 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            if ($redirect = $request->input('redirect')) {
+                if (str_starts_with($redirect, '/') && ! str_starts_with($redirect, '//')) {
+                    return redirect($redirect);
+                }
+            }
+
             return redirect()->intended('/dashboard');
         }
 
@@ -37,6 +46,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect('/');
     }
 }
