@@ -6,7 +6,6 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ProjectMemberAddedNotification extends Notification implements ShouldQueue
@@ -21,17 +20,7 @@ class ProjectMemberAddedNotification extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->subject("You've been added to {$this->project->name}")
-            ->greeting("Hello {$notifiable->name},")
-            ->line("{$this->inviter->name} added you to the project '{$this->project->name}' as a {$this->role}.")
-            ->action('View Project', url("/projects/{$this->project->id}"))
-            ->line('Thank you for using PlanHive!');
+        return ['database'];
     }
 
     public function toArray(object $notifiable): array

@@ -13,7 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Billable, HasFactory, Notifiable, SoftDeletes;
+    use Billable, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -23,6 +23,13 @@ class User extends Authenticatable
         'locale',
         'timezone',
         'is_admin',
+        'smtp_host',
+        'smtp_port',
+        'smtp_username',
+        'smtp_password',
+        'smtp_encryption',
+        'smtp_from_address',
+        'smtp_from_name',
     ];
 
     protected $hidden = [
@@ -76,5 +83,23 @@ class User extends Authenticatable
     public function integrations(): HasMany
     {
         return $this->hasMany(UserIntegration::class);
+    }
+
+    public function getSmtpPasswordAttribute(?string $value): ?string
+    {
+        return $value ? decrypt($value) : null;
+    }
+
+    public function setSmtpPasswordAttribute(?string $value): void
+    {
+        $this->attributes['smtp_password'] = $value ? encrypt($value) : null;
+    }
+
+    public function hasSmtpConfig(): bool
+    {
+        return filled($this->smtp_host)
+            && filled($this->smtp_port)
+            && filled($this->smtp_username)
+            && filled($this->smtp_password);
     }
 }

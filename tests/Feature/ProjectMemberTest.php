@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ProjectMemberAdded;
+use App\Mail\ProjectMemberInvited;
 use App\Models\Project;
 use App\Models\ProjectInvitation;
 use App\Models\User;
 use App\Notifications\ProjectMemberAddedNotification;
-use App\Notifications\ProjectMemberInvitedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -25,6 +27,7 @@ class ProjectMemberTest extends TestCase
 
     public function test_existing_user_receives_notification_when_added_to_project(): void
     {
+        Mail::fake();
         Notification::fake();
 
         $project = Project::factory()->create(['owner_id' => $this->owner->id, 'status' => 'active']);
@@ -45,12 +48,16 @@ class ProjectMemberTest extends TestCase
             'role' => 'manager',
         ]);
 
+        Mail::assertSent(ProjectMemberAdded::class, function ($mail) use ($member) {
+            return $mail->hasTo($member->email);
+        });
+
         Notification::assertSentTo($member, ProjectMemberAddedNotification::class);
     }
 
-    public function test_invitation_is_created_for_new_email_and_notification_is_sent(): void
+    public function test_invitation_is_created_for_new_email_and_mail_is_sent(): void
     {
-        Notification::fake();
+        Mail::fake();
 
         $project = Project::factory()->create(['owner_id' => $this->owner->id, 'status' => 'active']);
         $project->members()->attach($this->owner->id, ['role' => 'owner']);
@@ -70,17 +77,9 @@ class ProjectMemberTest extends TestCase
             'role' => 'viewer',
         ]);
 
-        $invitation = ProjectInvitation::where('project_id', $project->id)
-            ->where('email', $email)
-            ->first();
-
-        Notification::assertSentTo(
-            new \Illuminate\Notifications\AnonymousNotifiable,
-            ProjectMemberInvitedNotification::class,
-            function ($notification, $channels, $notifiable) use ($invitation) {
-                return $notifiable->routes['mail'] === $invitation->email;
-            }
-        );
+        Mail::assertSent(ProjectMemberInvited::class, function ($mail) use ($email) {
+            return $mail->hasTo($email);
+        });
     }
 
     public function test_invitation_can_be_accepted_by_existing_user(): void

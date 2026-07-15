@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
     // Profile & Settings
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/smtp', [ProfileController::class, 'updateSmtp'])->name('profile.smtp');
+    Route::post('/profile/smtp/test', [ProfileController::class, 'sendTestEmail'])->name('profile.smtp.test');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
 
