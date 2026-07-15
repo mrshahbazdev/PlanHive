@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ProjectMemberAdded;
+use App\Mail\ProjectMemberInvited;
 use App\Models\Project;
 use App\Models\ProjectInvitation;
 use App\Models\User;
 use App\Notifications\ProjectMemberAddedNotification;
-use App\Notifications\ProjectMemberInvitedNotification;
+use App\Services\UserMailer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
 class ProjectMemberController extends Controller
@@ -32,6 +33,7 @@ class ProjectMemberController extends Controller
                 'joined_at' => now(),
             ]);
 
+            UserMailer::send($request->user(), $user->email, new ProjectMemberAdded($project, $request->user(), $validated['role']));
             $user->notify(new ProjectMemberAddedNotification($project, $request->user(), $validated['role']));
 
             return back()->with('success', 'Member added successfully');
@@ -48,8 +50,7 @@ class ProjectMemberController extends Controller
             ]
         );
 
-        Notification::route('mail', $validated['email'])
-            ->notify(new ProjectMemberInvitedNotification($project, $request->user(), $invitation));
+        UserMailer::send($request->user(), $validated['email'], new ProjectMemberInvited($project, $request->user(), $invitation));
 
         return back()->with('success', "An invitation has been sent to {$validated['email']}");
     }

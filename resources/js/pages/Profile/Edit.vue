@@ -6,11 +6,23 @@ import { ref } from 'vue';
 const { t, locale } = useI18n();
 const page = usePage();
 
+const user = page.props.auth.user;
+
 const profileForm = useForm({
-    name: page.props.auth.user.name,
-    email: page.props.auth.user.email,
-    locale: page.props.auth.user.locale || 'en',
-    timezone: page.props.auth.user.timezone || 'Europe/Berlin',
+    name: user.name,
+    email: user.email,
+    locale: user.locale || 'en',
+    timezone: user.timezone || 'Europe/Berlin',
+});
+
+const smtpForm = useForm({
+    smtp_host: user.smtp_host || '',
+    smtp_port: user.smtp_port || '',
+    smtp_username: user.smtp_username || '',
+    smtp_password: '',
+    smtp_encryption: user.smtp_encryption || 'tls',
+    smtp_from_address: user.smtp_from_address || '',
+    smtp_from_name: user.smtp_from_name || '',
 });
 
 const passwordForm = useForm({
@@ -27,6 +39,14 @@ const updateProfile = () => {
             locale.value = profileForm.locale;
         },
     });
+};
+
+const updateSmtp = () => {
+    smtpForm.put('/profile/smtp');
+};
+
+const sendTestEmail = () => {
+    smtpForm.post('/profile/smtp/test', { preserveScroll: true });
 };
 
 const updatePassword = () => {
@@ -102,6 +122,68 @@ const timezones = [
 
                 <div class="flex justify-end pt-4">
                     <button type="submit" :disabled="profileForm.processing" class="btn-primary">{{ t('common.save') }}</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- SMTP Settings -->
+        <div class="card p-8">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ t('profile.smtp_settings') }}</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">{{ t('profile.smtp_help') }}</p>
+
+            <form @submit.prevent="updateSmtp" class="space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.smtp_host') }}</label>
+                        <input v-model="smtpForm.smtp_host" type="text" class="input-field" placeholder="smtp.example.com" />
+                        <p v-if="smtpForm.errors.smtp_host" class="mt-1 text-sm text-red-500">{{ smtpForm.errors.smtp_host }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.smtp_port') }}</label>
+                        <input v-model="smtpForm.smtp_port" type="text" class="input-field" placeholder="587" />
+                        <p v-if="smtpForm.errors.smtp_port" class="mt-1 text-sm text-red-500">{{ smtpForm.errors.smtp_port }}</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.smtp_username') }}</label>
+                        <input v-model="smtpForm.smtp_username" type="text" class="input-field" />
+                        <p v-if="smtpForm.errors.smtp_username" class="mt-1 text-sm text-red-500">{{ smtpForm.errors.smtp_username }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.smtp_password') }}</label>
+                        <input v-model="smtpForm.smtp_password" type="password" class="input-field" />
+                        <p v-if="smtpForm.errors.smtp_password" class="mt-1 text-sm text-red-500">{{ smtpForm.errors.smtp_password }}</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.smtp_encryption') }}</label>
+                    <select v-model="smtpForm.smtp_encryption" class="input-field">
+                        <option value="tls">TLS</option>
+                        <option value="ssl">SSL</option>
+                        <option value="null">None</option>
+                    </select>
+                    <p v-if="smtpForm.errors.smtp_encryption" class="mt-1 text-sm text-red-500">{{ smtpForm.errors.smtp_encryption }}</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.smtp_from_address') }}</label>
+                        <input v-model="smtpForm.smtp_from_address" type="email" class="input-field" />
+                        <p v-if="smtpForm.errors.smtp_from_address" class="mt-1 text-sm text-red-500">{{ smtpForm.errors.smtp_from_address }}</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('profile.smtp_from_name') }}</label>
+                        <input v-model="smtpForm.smtp_from_name" type="text" class="input-field" />
+                        <p v-if="smtpForm.errors.smtp_from_name" class="mt-1 text-sm text-red-500">{{ smtpForm.errors.smtp_from_name }}</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" @click="sendTestEmail" :disabled="smtpForm.processing" class="btn-secondary">{{ t('profile.send_test_email') }}</button>
+                    <button type="submit" :disabled="smtpForm.processing" class="btn-primary">{{ t('common.save') }}</button>
                 </div>
             </form>
         </div>

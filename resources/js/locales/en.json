@@ -233,7 +233,17 @@
         "change_password": "Change Password",
         "current_password": "Current Password",
         "new_password": "New Password",
-        "update_password": "Update Password"
+        "update_password": "Update Password",
+        "smtp_settings": "SMTP Settings",
+        "smtp_help": "Leave empty to use the default system mailer.",
+        "smtp_host": "SMTP Host",
+        "smtp_port": "SMTP Port",
+        "smtp_username": "SMTP Username",
+        "smtp_password": "SMTP Password",
+        "smtp_encryption": "Encryption",
+        "smtp_from_address": "From Address",
+        "smtp_from_name": "From Name",
+        "send_test_email": "Send Test Email"
     },
     "notifications": {
         "title": "Notifications",
