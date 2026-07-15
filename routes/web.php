@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -15,11 +16,11 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectInvitationController;
 use App\Http\Controllers\ProjectMemberController;
 use App\Http\Controllers\ReminderController;
-use App\Http\Controllers\SearchController;
-use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,6 +37,12 @@ Route::middleware('guest')->group(function () {
     Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
     Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
 });
+
+// Project invitations (guest or authenticated)
+Route::get('/invitations/{token}', [ProjectInvitationController::class, 'show'])->name('invitations.show');
+Route::post('/invitations/{token}/accept', [ProjectInvitationController::class, 'accept'])
+    ->name('invitations.accept')
+    ->middleware('auth');
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {

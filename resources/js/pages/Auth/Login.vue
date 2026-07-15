@@ -1,13 +1,15 @@
 <script setup>
-import { useForm, Link } from '@inertiajs/vue3';
+import { useForm, Link, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const page = usePage();
 
 const form = useForm({
     email: '',
     password: '',
     remember: false,
+    redirect: page.props.redirect || '',
 });
 
 const submit = () => {
@@ -35,6 +37,8 @@ const submit = () => {
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">{{ t('auth.login') }}</h2>
 
                 <form @submit.prevent="submit" class="space-y-5">
+                    <input type="hidden" v-model="form.redirect" />
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ t('auth.email') }}</label>
                         <input

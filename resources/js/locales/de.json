@@ -405,5 +405,15 @@
         "title": "Suche",
         "placeholder": "Projekte, Aufgaben, Notizen, Kontakte suchen...",
         "start": "Geben Sie mindestens 2 Zeichen ein, um alle Ihre Daten zu durchsuchen"
+    },
+    "invitations": {
+        "title": "Sie wurden zu {project} eingeladen",
+        "description": "{name} hat Sie eingeladen, bei '{project}' als {role} mitzuarbeiten.",
+        "signed_in_as": "Angemeldet als {email}.",
+        "accept": "Einladung annehmen",
+        "wrong_account": "Diese Einladung wurde an {invitation_email} gesendet, aber Sie sind als {user_email} angemeldet.",
+        "sign_out": "Abmelden und das richtige Konto verwenden",
+        "create_account": "Konto erstellen",
+        "sign_in": "Anmelden"
     }
 }
