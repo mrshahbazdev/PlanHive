@@ -16,7 +16,7 @@ class TaskFactory extends Factory
         return [
             'title' => fake()->sentence(4),
             'description' => fake()->paragraph(),
-            'priority' => fake()->randomElement(['low', 'medium', 'high', 'critical']),
+            'priority' => fake()->randomElement(['low', 'medium', 'high', 'urgent']),
             'status' => fake()->randomElement(['todo', 'in_progress', 'review', 'done']),
             'due_date' => fake()->dateTimeBetween('now', '+30 days'),
             'project_id' => Project::factory(),

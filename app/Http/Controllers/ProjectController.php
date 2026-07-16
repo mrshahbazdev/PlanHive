@@ -52,7 +52,7 @@ class ProjectController extends Controller
     public function show(Project $project): Response
     {
         $project->load([
-            'members',
+            'members' => fn ($q) => $q->select('users.id', 'users.name', 'users.avatar'),
             'tasks' => fn ($q) => $q->whereNull('parent_id')->orderBy('sort_order'),
             'tasks.assignee:id,name,avatar',
             'tasks.subtasks',

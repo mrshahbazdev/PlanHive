@@ -16,7 +16,7 @@ class ProjectFactory extends Factory
             'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'color' => fake()->hexColor(),
-            'status' => fake()->randomElement(['active', 'paused', 'completed', 'archived']),
+            'status' => fake()->randomElement(['active', 'on_hold', 'completed', 'archived']),
             'owner_id' => User::factory(),
             'start_date' => now(),
             'end_date' => now()->addMonths(3),
