@@ -26,6 +26,12 @@ class HandleInertiaRequests extends Middleware
                     'locale' => $request->user()->locale,
                     'timezone' => $request->user()->timezone,
                     'is_admin' => $request->user()->is_admin,
+                    'smtp_host' => $request->user()->smtp_host,
+                    'smtp_port' => $request->user()->smtp_port,
+                    'smtp_username' => $request->user()->smtp_username,
+                    'smtp_encryption' => $request->user()->smtp_encryption,
+                    'smtp_from_address' => $request->user()->smtp_from_address,
+                    'smtp_from_name' => $request->user()->smtp_from_name,
                 ] : null,
             ],
             'unreadNotificationsCount' => fn () => $request->user()
