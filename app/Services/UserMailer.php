@@ -2,24 +2,34 @@
 
 namespace App\Services;
 
+use App\Exceptions\MailDeliveryException;
 use App\Models\User;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Mail\Mailer;
 use Illuminate\Support\Facades\Mail;
 use InvalidArgumentException;
+use Throwable;
 
 class UserMailer
 {
     public static function send(User $fromUser, string $to, Mailable $mailable): void
     {
-        if (! $fromUser->hasSmtpConfig()) {
-            Mail::to($to)->send($mailable);
+        try {
+            if (! $fromUser->hasSmtpConfig()) {
+                Mail::to($to)->send($mailable);
 
-            return;
+                return;
+            }
+
+            $mailer = self::buildMailer($fromUser);
+            $mailer->to($to)->send($mailable);
+        } catch (Throwable $e) {
+            if ($e instanceof MailDeliveryException) {
+                throw $e;
+            }
+
+            throw MailDeliveryException::fromException($e);
         }
-
-        $mailer = self::buildMailer($fromUser);
-        $mailer->to($to)->send($mailable);
     }
 
     public static function buildMailer(User $user): Mailer

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\MailDeliveryException;
 use App\Mail\ProjectMemberAdded;
 use App\Mail\ProjectMemberInvited;
 use App\Models\Project;
@@ -33,8 +34,12 @@ class ProjectMemberController extends Controller
                 'joined_at' => now(),
             ]);
 
-            UserMailer::send($request->user(), $user->email, new ProjectMemberAdded($project, $request->user(), $validated['role']));
-            $user->notify(new ProjectMemberAddedNotification($project, $request->user(), $validated['role']));
+            try {
+                UserMailer::send($request->user(), $user->email, new ProjectMemberAdded($project, $request->user(), $validated['role']));
+                $user->notify(new ProjectMemberAddedNotification($project, $request->user(), $validated['role']));
+            } catch (MailDeliveryException $e) {
+                return back()->with('error', "Member added, but the email could not be sent: {$e->getMessage()}");
+            }
 
             return back()->with('success', 'Member added successfully');
         }
@@ -50,7 +55,13 @@ class ProjectMemberController extends Controller
             ]
         );
 
-        UserMailer::send($request->user(), $validated['email'], new ProjectMemberInvited($project, $request->user(), $invitation));
+        try {
+            UserMailer::send($request->user(), $validated['email'], new ProjectMemberInvited($project, $request->user(), $invitation));
+        } catch (MailDeliveryException $e) {
+            $invitation->delete();
+
+            return back()->with('error', "Invitation could not be sent: {$e->getMessage()}");
+        }
 
         return back()->with('success', "An invitation has been sent to {$validated['email']}");
     }

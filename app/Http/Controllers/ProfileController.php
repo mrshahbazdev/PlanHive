@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\MailDeliveryException;
 use App\Mail\TestEmail;
 use App\Services\UserMailer;
 use Illuminate\Http\Request;
@@ -60,7 +61,11 @@ class ProfileController extends Controller
 
     public function sendTestEmail(Request $request)
     {
-        UserMailer::send($request->user(), $request->user()->email, new TestEmail($request->user()->name));
+        try {
+            UserMailer::send($request->user(), $request->user()->email, new TestEmail($request->user()->name));
+        } catch (MailDeliveryException $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
         return back()->with('success', 'Test email sent. Check your inbox.');
     }
