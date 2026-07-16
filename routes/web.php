@@ -75,6 +75,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/projects/{project}/tasks', [TaskController::class, 'store'])->name('tasks.store');
     Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::patch('/tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.status');
+    Route::post('/tasks/{task}/assign', [TaskController::class, 'assign'])->name('tasks.assign');
+    Route::post('/tasks/{task}/assign-to-me', [TaskController::class, 'assignToMe'])->name('tasks.assignToMe');
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
     // Goals

@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue';
-import { Link, useForm, router } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { Link, useForm, usePage, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const props = defineProps({ project: Object });
+const page = usePage();
+const user = page.props.auth.user;
 
 const showTaskModal = ref(false);
 const showGoalModal = ref(false);
@@ -19,11 +21,11 @@ const detailTask = ref(null);
 const draggedTaskId = ref(null);
 
 const taskForm = useForm({
-    title: '', description: '', priority: 'medium', status: 'todo', due_date: '', assigned_to: null,
+    title: '', description: '', priority: 'medium', status: 'todo', due_date: '', assigned_to: user.id,
 });
 
 const editTaskForm = useForm({
-    title: '', description: '', priority: 'medium', status: 'todo', due_date: '', assigned_to: null,
+    title: '', description: '', priority: 'medium', status: 'todo', due_date: '', assigned_to: user.id,
 });
 
 const goalForm = useForm({
@@ -47,7 +49,7 @@ const openEditTask = (task) => {
     editTaskForm.priority = task.priority;
     editTaskForm.status = task.status;
     editTaskForm.due_date = task.due_date ? task.due_date.substring(0, 10) : '';
-    editTaskForm.assigned_to = task.assigned_to;
+    editTaskForm.assigned_to = task.assigned_to ?? user.id;
     showEditTaskModal.value = true;
 };
 
@@ -102,6 +104,22 @@ const deleteGoal = (goalId) => {
 
 const updateTaskStatus = (taskId, status) => {
     router.patch(`/tasks/${taskId}/status`, { status });
+};
+
+const isProjectAdmin = () => {
+    if (props.project.owner_id === user.id) return true;
+    const member = props.project.members?.find(m => m.id === user.id);
+    return ['owner', 'boss', 'manager'].includes(member?.pivot?.role);
+};
+
+const assigneeOptions = computed(() => {
+    if (!props.project.members) return [];
+    if (isProjectAdmin()) return props.project.members;
+    return props.project.members.filter(m => m.id === user.id);
+});
+
+const assignTaskToMe = (taskId) => {
+    router.post(`/tasks/${taskId}/assign-to-me`, {}, { preserveScroll: true });
 };
 
 const deleteProject = () => {
@@ -231,8 +249,16 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
                             </div>
                             <div class="flex items-center justify-between">
                                 <span :class="[priorityColors[task.priority], 'text-xs px-2 py-0.5 rounded-full font-medium']">{{ t(`tasks.${task.priority}`) }}</span>
-                                <div v-if="task.assignee" class="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs">
-                                    {{ task.assignee.name.charAt(0) }}
+                                <div class="flex items-center gap-2">
+                                    <button v-if="!task.assignee" @click="assignTaskToMe(task.id)" class="text-xs px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 hover:bg-primary-200">
+                                        {{ t('tasks.take_it') }}
+                                    </button>
+                                    <div v-else class="flex items-center gap-1">
+                                        <div class="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs">
+                                            {{ task.assignee.name.charAt(0) }}
+                                        </div>
+                                        <span class="text-xs text-gray-600 dark:text-gray-400">{{ task.assignee.name }}</span>
+                                    </div>
                                 </div>
                             </div>
                             <p v-if="task.due_date" class="text-xs text-gray-400 mt-1">{{ new Date(task.due_date).toLocaleDateString() }}</p>
@@ -445,6 +471,14 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
                             <input v-model="taskForm.due_date" type="date" class="input-field" />
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('tasks.assignee') }}</label>
+                        <select v-model="taskForm.assigned_to" class="input-field">
+                            <option :value="null" v-if="isProjectAdmin()">{{ t('tasks.unassigned') }}</option>
+                            <option v-for="member in assigneeOptions" :key="member.id" :value="member.id">{{ member.name }}</option>
+                        </select>
+                        <p v-if="taskForm.errors.assigned_to" class="mt-1 text-sm text-red-500">{{ taskForm.errors.assigned_to }}</p>
+                    </div>
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" @click="showTaskModal = false" class="btn-secondary">{{ t('common.cancel') }}</button>
                         <button type="submit" :disabled="taskForm.processing" class="btn-primary">{{ t('common.create') }}</button>
@@ -486,6 +520,14 @@ const statusColumns = ['todo', 'in_progress', 'review', 'done'];
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('tasks.due_date') }}</label>
                         <input v-model="editTaskForm.due_date" type="date" class="input-field" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ t('tasks.assignee') }}</label>
+                        <select v-model="editTaskForm.assigned_to" class="input-field">
+                            <option :value="null" v-if="isProjectAdmin()">{{ t('tasks.unassigned') }}</option>
+                            <option v-for="member in assigneeOptions" :key="member.id" :value="member.id">{{ member.name }}</option>
+                        </select>
+                        <p v-if="editTaskForm.errors.assigned_to" class="mt-1 text-sm text-red-500">{{ editTaskForm.errors.assigned_to }}</p>
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" @click="showEditTaskModal = false" class="btn-secondary">{{ t('common.cancel') }}</button>

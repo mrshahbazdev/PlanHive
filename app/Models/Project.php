@@ -69,4 +69,26 @@ class Project extends Model
     {
         return $this->hasMany(Contact::class);
     }
+
+    public function isMember(User $user): bool
+    {
+        return $this->members()->where('user_id', $user->id)->exists()
+            || $this->owner_id === $user->id;
+    }
+
+    public function isAdmin(User $user): bool
+    {
+        if ($this->owner_id === $user->id) {
+            return true;
+        }
+
+        $role = $this->members()->where('user_id', $user->id)->value('role');
+
+        return in_array($role, ['boss', 'manager'], true);
+    }
+
+    public function memberIds(): array
+    {
+        return $this->members()->pluck('users.id')->push($this->owner_id)->unique()->values()->all();
+    }
 }
